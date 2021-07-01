@@ -4,3 +4,4 @@ project(4ku)
 
 add_subdirectory(tests)
 add_subdirectory(perft)
+add_subdirectory(engine)
