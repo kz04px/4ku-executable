@@ -36,6 +36,24 @@ struct Move {
     Piece promo;
 };
 
+static void move_str(const Move &move, char *str, const bool flip) {
+    static constexpr char promos[] = {'p', 'n', 'b', 'r', 'q', 'k'};
+
+    str[0] = static_cast<char>((move.from % 8) + 'a');
+    str[2] = static_cast<char>((move.to % 8) + 'a');
+    if (flip) {
+        str[1] = static_cast<char>(7 - (move.from / 8) + '1');
+        str[3] = static_cast<char>(7 - (move.to / 8) + '1');
+    } else {
+        str[1] = static_cast<char>((move.from / 8) + '1');
+        str[3] = static_cast<char>((move.to / 8) + '1');
+    }
+
+    if (move.type == Move::Type::Promo || move.type == Move::Type::Promocapture) {
+        str[4] = promos[static_cast<int>(move.promo)];
+    }
+}
+
 }  // namespace chess
 
 #endif
