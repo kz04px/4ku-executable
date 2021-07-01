@@ -9,7 +9,7 @@
 
 namespace search {
 
-[[nodiscard]] int alphabeta(chess::Position &pos, int alpha, int beta, int depth) {
+[[nodiscard]] int alphabeta(chess::Position &pos, int alpha, int beta, int depth, chess::Move &pv) {
     if (depth == 0) {
         return eval::eval(pos);
     }
@@ -30,11 +30,12 @@ namespace search {
             continue;
         }
 
-        const auto score = -alphabeta(pos, -beta, -alpha, depth - 1);
+        const auto score = -alphabeta(pos, -beta, -alpha, depth - 1, pv);
         chess::undomove(pos, moves[i]);
 
         if (score > best_score) {
             best_score = score;
+            pv = moves[i];
         }
 
         if (alpha >= beta) {
