@@ -1,4 +1,5 @@
 #include "alphabeta.hpp"
+#include <chess/attack.hpp>
 #include <chess/makemove.hpp>
 #include <chess/move.hpp>
 #include <chess/movegen.hpp>
@@ -15,12 +16,20 @@ namespace search {
 
     chess::Move moves[256];
     const int num_moves = chess::movegen(pos, moves);
-    int best_score = -1000000;  // std::numeric_limits<int>::lowest();
+    int best_score = -1000000;
 
     // Move ordering
 
     for (int i = 0; i < num_moves; ++i) {
         chess::makemove(pos, moves[i]);
+
+        const int ksq = (pos.colour[1] & pos.pieces[static_cast<int>(chess::Piece::King)]).lsbll();
+
+        if (chess::attacked(pos, ksq, false)) {
+            undomove(pos, moves[i]);
+            continue;
+        }
+
         const auto score = -alphabeta(pos, -beta, -alpha, depth - 1);
         chess::undomove(pos, moves[i]);
 
