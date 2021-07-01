@@ -33,6 +33,7 @@ add_executable(
     uci/go.cpp
     uci/isready.cpp
     uci/listen.cpp
+    uci/moves.cpp
 
     # Eval
     eval/eval.cpp

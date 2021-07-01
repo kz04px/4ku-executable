@@ -30,6 +30,10 @@ void listen() {
         else if (strncmp(word, "go", 2) == 0) {
             go(pos);
         }
+        // moves
+        else if (strncmp(word, "moves", 5) == 0) {
+            moves(pos);
+        }
     }
 }
 

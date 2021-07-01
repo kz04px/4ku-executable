@@ -9,6 +9,7 @@ namespace uci {
 
 void listen();
 void isready();
+void moves(chess::Position &pos);
 void go(chess::Position &pos);
 
 }  // namespace uci
