@@ -13,9 +13,7 @@ void listen() {
     getchar();
 
     // Tell the GUI about us
-    puts("id name 4ku");
-    puts("id author kz04px");
-    puts("uciok");
+    puts("id name 4ku\nid author kz04px\nuciok");
 
     while (scanf("%s", word) != EOF) {
         // quit
