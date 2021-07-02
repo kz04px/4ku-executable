@@ -17,13 +17,9 @@ namespace chess {
 */
 
 void makemove(Position &pos, const Move &move) {
-    // Remove our piece
-    pos.colour[0] ^= Bitboard(move.from);
-    pos.pieces[static_cast<int>(move.piece)] ^= Bitboard(move.from);
-
-    // Replace our piece
-    pos.colour[0] ^= Bitboard(move.to);
-    pos.pieces[static_cast<int>(move.piece)] ^= Bitboard(move.to);
+    // Move our piece
+    pos.colour[0] ^= Bitboard(move.from) | Bitboard(move.to);
+    pos.pieces[static_cast<int>(move.piece)] ^= Bitboard(move.from) | Bitboard(move.to);
 
     // Update history
     pos.history[pos.history_size].ep = pos.ep;

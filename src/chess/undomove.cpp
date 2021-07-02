@@ -9,13 +9,9 @@ void undomove(Position &pos, const Move &move) {
     // Flip the board
     flip(pos);
 
-    // Remove our piece
-    pos.colour[0] ^= Bitboard(move.from);
-    pos.pieces[static_cast<int>(move.piece)] ^= Bitboard(move.from);
-
-    // Replace our piece
-    pos.colour[0] ^= Bitboard(move.to);
-    pos.pieces[static_cast<int>(move.piece)] ^= Bitboard(move.to);
+    // Move our piece
+    pos.colour[0] ^= Bitboard(move.from) | Bitboard(move.to);
+    pos.pieces[static_cast<int>(move.piece)] ^= Bitboard(move.from) | Bitboard(move.to);
 
     switch (move.type) {
         case Move::Type::Quiet:
