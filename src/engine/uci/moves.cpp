@@ -15,7 +15,7 @@ void moves(chess::Position &pos) {
     bool quit = false;
 
     while (!quit) {
-        int i = 0;
+        int word_size = 0;
         char c;
         while (c = getchar()) {
             if (c == '\n' || c == '\0') {
@@ -24,10 +24,10 @@ void moves(chess::Position &pos) {
             } else if (c == ' ') {
                 break;
             }
-            word[i] = c;
-            i++;
+            word[word_size] = c;
+            word_size++;
         }
-        word[i] = '\0';
+        word[word_size] = '\0';
 
         const int num_moves = chess::movegen(pos, moves);
 
@@ -35,6 +35,7 @@ void moves(chess::Position &pos) {
             chess::move_str(moves[i], movestr, pos.flipped);
             if (strncmp(movestr, word, strlen(movestr)) == 0) {
                 chess::makemove(pos, moves[i]);
+                break;
             }
         }
     }

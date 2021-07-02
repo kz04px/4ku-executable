@@ -48,9 +48,11 @@ static void move_str(const Move &move, char *str, const bool flip) {
         str[1] = static_cast<char>((move.from / 8) + '1');
         str[3] = static_cast<char>((move.to / 8) + '1');
     }
+    str[4] = '\0';
 
     if (move.type == Move::Type::Promo || move.type == Move::Type::Promocapture) {
         str[4] = promos[static_cast<int>(move.promo)];
+        str[5] = '\0';
     }
 }
 

@@ -32,6 +32,7 @@ void listen() {
         }
         // moves
         else if (strncmp(word, "moves", 5) == 0) {
+            pos = chess::Position();
             moves(pos);
         }
     }
