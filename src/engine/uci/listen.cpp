@@ -24,18 +24,20 @@ void listen() {
                 return;
             // isready
             case 'i':
-                getchar();  // s
-                getchar();  // r
-                getchar();  // e
-                getchar();  // a
-                getchar();  // d
-                getchar();  // y
-                isready();
+                if (getchar() == 's') {
+                    getchar();  // r
+                    getchar();  // e
+                    getchar();  // a
+                    getchar();  // d
+                    getchar();  // y
+                    isready();
+                }
                 break;
             // go
             case 'g':
-                getchar();  // o
-                go(pos);
+                if (getchar() == 'o') {
+                    go(pos);
+                }
                 break;
             // moves
             case 'm':
