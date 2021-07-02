@@ -65,12 +65,6 @@ class Bitboard {
         return *this;
     }
 
-    /*
-    [[nodiscard]] constexpr auto forwards(const bool flipped) const noexcept {
-        return flipped ? south() : north();
-    }
-    */
-
     [[nodiscard]] constexpr Bitboard flipped() const noexcept {
         return __builtin_bswap64(m_mask);
     }
