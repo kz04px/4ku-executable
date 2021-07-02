@@ -114,8 +114,10 @@ class Bitboard {
     }
 
     [[nodiscard]] constexpr Bitboard knight() const noexcept {
-        return north().north().west() | north().north().east() | south().south().west() | south().south().east() |
-               east().east().north() | east().east().south() | west().west().north() | west().west().south();
+        return (((m_mask << 15) | (m_mask >> 17)) & 0x7F7F7F7F7F7F7F7FULL) |
+               (((m_mask << 17) | (m_mask >> 15)) & 0xFEFEFEFEFEFEFEFEULL) |
+               (((m_mask << 10) | (m_mask >> 6)) & 0xFCFCFCFCFCFCFCFCULL) |
+               (((m_mask << 6) | (m_mask >> 10)) & 0x3F3F3F3F3F3F3F3FULL);
     }
 
     [[nodiscard]] constexpr Bitboard operator|(const Bitboard &rhs) const noexcept {
