@@ -11,27 +11,42 @@ void listen() {
 
     // Pretend to wait for "uci"
     getchar();
+    getchar();
+    getchar();
 
     // Tell the GUI about us
     puts("id name 4ku\nid author kz04px\nuciok");
 
-    while (scanf("%s", word) != EOF) {
-        // quit
-        if (strncmp(word, "quit", 4) == 0) {
-            break;
-        }
-        // isready
-        else if (strncmp(word, "isready", 7) == 0) {
-            isready();
-        }
-        // go
-        else if (strncmp(word, "go", 2) == 0) {
-            go(pos);
-        }
-        // moves
-        else if (strncmp(word, "moves", 5) == 0) {
-            pos = chess::Position();
-            moves(pos);
+    char c;
+    while ((c = getchar()) != EOF) {
+        switch (c) {
+            // quit
+            case 'q':
+                return;
+            // isready
+            case 'i':
+                getchar();  // s
+                getchar();  // r
+                getchar();  // e
+                getchar();  // a
+                getchar();  // d
+                getchar();  // y
+                isready();
+                break;
+            // go
+            case 'g':
+                getchar();  // o
+                go(pos);
+                break;
+            // moves
+            case 'm':
+                getchar();  // o
+                getchar();  // v
+                getchar();  // e
+                getchar();  // s
+                pos = chess::Position();
+                moves(pos);
+                break;
         }
     }
 }
