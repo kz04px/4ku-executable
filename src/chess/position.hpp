@@ -23,7 +23,6 @@ struct Position {
     History history[1024];
     int history_size = 0;
     int halfmoves = 0;
-    int fullmoves = 1;
     int ep = -1;
     bool castling[4] = {true, true, true, true};
     bool flipped = false;
