@@ -90,9 +90,7 @@ int movegen(const Position &pos, Move *movelist) {
     // Knights
     for (const auto &fr : pos.colour[0] & pos.pieces[static_cast<int>(Piece::Knight)]) {
         const auto bb = Bitboard(fr);
-        auto moves = bb.north().north().west() | bb.north().north().east() | bb.south().south().west() |
-                     bb.south().south().east() | bb.east().east().north() | bb.east().east().south() |
-                     bb.west().west().north() | bb.west().west().south();
+        auto moves = bb.knight();
         moves &= ~pos.colour[0];
 
         for (const auto to : moves) {

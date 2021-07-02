@@ -20,9 +20,7 @@ namespace chess {
     }
 
     // Knights
-    if (bb &
-        (kt.north().north().west() | kt.north().north().east() | kt.south().south().west() | kt.south().south().east() |
-         kt.east().east().north() | kt.east().east().south() | kt.west().west().north() | kt.west().west().south())) {
+    if (bb & kt.knight()) {
         return true;
     }
 

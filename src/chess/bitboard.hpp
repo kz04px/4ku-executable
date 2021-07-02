@@ -111,6 +111,11 @@ class Bitboard {
         return north() | south() | north().west() | north().east() | south().west() | south().east() | west() | east();
     }
 
+    [[nodiscard]] constexpr Bitboard knight() const noexcept {
+        return north().north().west() | north().north().east() | south().south().west() | south().south().east() |
+               east().east().north() | east().east().south() | west().west().north() | west().west().south();
+    }
+
     [[nodiscard]] constexpr Bitboard operator|(const Bitboard &rhs) const noexcept {
         return m_mask | rhs.m_mask;
     }
