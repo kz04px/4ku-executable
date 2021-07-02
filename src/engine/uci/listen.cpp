@@ -7,7 +7,6 @@ namespace uci {
 
 void listen() {
     auto pos = chess::Position();
-    char word[4096];
 
     // Pretend to wait for "uci"
     getchar();
