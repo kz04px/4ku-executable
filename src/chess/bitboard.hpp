@@ -108,7 +108,9 @@ class Bitboard {
     }
 
     [[nodiscard]] constexpr Bitboard adjacent() const noexcept {
-        return north() | south() | north().west() | north().east() | south().west() | south().east() | west() | east();
+        return (m_mask << 8) | (m_mask >> 8) |
+               (((m_mask >> 1) | (m_mask >> 9) | (m_mask << 7)) & 0x7F7F7F7F7F7F7F7FULL) |
+               (((m_mask << 1) | (m_mask << 9) | (m_mask >> 7)) & 0xFEFEFEFEFEFEFEFEULL);
     }
 
     [[nodiscard]] constexpr Bitboard knight() const noexcept {
