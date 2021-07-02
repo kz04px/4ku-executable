@@ -26,7 +26,6 @@ add_executable(
     ../chess/attack.cpp
     ../chess/makemove.cpp
     ../chess/movegen.cpp
-    ../chess/perft.cpp
     ../chess/undomove.cpp
 
     # UCI
