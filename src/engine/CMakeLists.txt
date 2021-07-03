@@ -7,7 +7,7 @@ include_directories(../)
 
 # Flags
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_FLAGS "-Os -s -Wall -Wextra -Wshadow -flto -fno-exceptions -fdata-sections -ffunction-sections -fvisibility=hidden -fvisibility-inlines-hidden -Wl,--gc-sections -Bsymbolic -Wl,--exclude-libs,ALL -fno-inline-small-functions")
+set(CMAKE_CXX_FLAGS "-Os -s -Wall -Wextra -Wshadow -flto -fuse-linker-plugin -fno-plt -fno-stack-protector -fno-stack-check -fno-unwind-tables -fno-asynchronous-unwind-tables -fomit-frame-pointer -fno-exceptions -fno-rtti -fno-threadsafe-statics -fdata-sections -ffunction-sections -fvisibility=hidden -fvisibility-inlines-hidden -fno-inline-small-functions -Wl,--gc-sections    -Wl,--build-id=none -z norelro -Wl,--no-eh-frame-hdr -no-pie -Wl,--no-ld-generated-unwind-info -Wl,--hash-style=sysv -Wl,-z,nodynamic-undefined-weak -Wl,--gc-sections -Bsymbolic -Wl,--exclude-libs,ALL")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-march=native -DNDEBUG")
 
