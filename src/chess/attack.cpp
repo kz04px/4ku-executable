@@ -11,8 +11,7 @@ namespace chess {
     const auto BQ = pos.pieces[static_cast<int>(Piece::Bishop)] | pos.pieces[static_cast<int>(Piece::Queen)];
     const auto RQ = pos.pieces[static_cast<int>(Piece::Rook)] | pos.pieces[static_cast<int>(Piece::Queen)];
     const auto pawns = pos.colour[them] & pos.pieces[static_cast<int>(Piece::Pawn)];
-    const auto pawn_attacks =
-        them ? pawns.south().west() | pawns.south().east() : pawns.north().west() | pawns.north().east();
+    const auto pawn_attacks = them ? pawns.sw() | pawns.se() : pawns.nw() | pawns.ne();
 
     // Pawns
     if (pawn_attacks & bb) {

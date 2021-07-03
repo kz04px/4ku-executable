@@ -101,6 +101,22 @@ class Bitboard {
         return (m_mask >> 1) & ~0x8080808080808080ULL;
     }
 
+    [[nodiscard]] constexpr Bitboard nw() const noexcept {
+        return (m_mask << 7) & ~0x8080808080808080ULL;
+    }
+
+    [[nodiscard]] constexpr Bitboard ne() const noexcept {
+        return (m_mask << 9) & ~0x0101010101010101ULL;
+    }
+
+    [[nodiscard]] constexpr Bitboard sw() const noexcept {
+        return (m_mask >> 9) & ~0x8080808080808080ULL;
+    }
+
+    [[nodiscard]] constexpr Bitboard se() const noexcept {
+        return (m_mask >> 7) & ~0x0101010101010101ULL;
+    }
+
     [[nodiscard]] constexpr Bitboard adjacent() const noexcept {
         return (m_mask << 8) | (m_mask >> 8) |
                (((m_mask >> 1) | (m_mask >> 9) | (m_mask << 7)) & 0x7F7F7F7F7F7F7F7FULL) |
