@@ -13,32 +13,17 @@ namespace chess {
     const auto pawns = pos.colour[them] & pos.pieces[static_cast<int>(Piece::Pawn)];
     const auto pawn_attacks = them ? pawns.sw() | pawns.se() : pawns.nw() | pawns.ne();
 
-    // Pawns
-    if (pawn_attacks & bb) {
-        return true;
-    }
-
-    // Knights
-    if (bb & kt.knight()) {
-        return true;
-    }
-
-    // Bishop & Queen
-    if (raycast::bishop(sq, pos.colour[0] | pos.colour[1]) & pos.colour[them] & BQ) {
-        return true;
-    }
-
-    // Rook & Queen
-    if (raycast::rook(sq, pos.colour[0] | pos.colour[1]) & pos.colour[them] & RQ) {
-        return true;
-    }
-
-    // King
-    if (bb.adjacent() & pos.colour[them] & pos.pieces[static_cast<int>(Piece::King)]) {
-        return true;
-    }
-
-    return false;
+    return
+        // Pawns
+        (pawn_attacks & bb) |
+        // Knights
+        (bb & kt.knight()) |
+        // Bishops - Queens
+        (raycast::bishop(sq, pos.colour[0] | pos.colour[1]) & pos.colour[them] & BQ) |
+        // Rooks - Queens
+        (raycast::rook(sq, pos.colour[0] | pos.colour[1]) & pos.colour[them] & RQ) |
+        // King
+        (bb.adjacent() & pos.colour[them] & pos.pieces[static_cast<int>(Piece::King)]);
 }
 
 }  // namespace chess
