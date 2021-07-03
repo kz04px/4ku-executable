@@ -12,6 +12,11 @@ sh build-linux.sh
 
 ---
 
+## Executable Size
+Varies from system to system, but for me it's currently at **5,436 bytes**.
+
+---
+
 ## UCI Support
 The UCI protocol isn't strictly followed in the interests of space:
 - The first line of input after startup will be interpreted as "uci" even if it isn't.
