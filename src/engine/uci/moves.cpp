@@ -11,7 +11,7 @@ namespace uci {
 void moves(chess::Position &pos) {
     char word[4096];
     chess::Move moves[256];
-    char movestr[5];
+    char movestr[6];
     bool quit = false;
 
     while (!quit) {
