@@ -24,6 +24,7 @@ add_executable(
 
     # Tests - chess
     chess/fen.cpp
+    chess/moves.cpp
     chess/perft.cpp
     chess/rays.cpp
 
