@@ -4,11 +4,10 @@
 #include "move.hpp"
 #include "movegen.hpp"
 #include "position.hpp"
-#include "undomove.hpp"
 
 namespace chess {
 
-std::uint64_t perft(Position &pos, const int depth) {
+std::uint64_t perft(const Position &pos, const int depth) {
     if (depth == 0) {
         return 1;
     }
@@ -18,17 +17,17 @@ std::uint64_t perft(Position &pos, const int depth) {
     const int num_moves = movegen(pos, moves);
 
     for (int i = 0; i < num_moves; ++i) {
-        makemove(pos, moves[i]);
+        auto npos = pos;
 
-        const int ksq = (pos.colour[1] & pos.pieces[static_cast<int>(chess::Piece::King)]).lsbll();
+        makemove(npos, moves[i]);
 
-        if (chess::attacked(pos, ksq, false)) {
-            undomove(pos, moves[i]);
+        const int ksq = (npos.colour[1] & npos.pieces[static_cast<int>(chess::Piece::King)]).lsbll();
+
+        if (chess::attacked(npos, ksq, false)) {
             continue;
         }
 
-        nodes += perft(pos, depth - 1);
-        undomove(pos, moves[i]);
+        nodes += perft(npos, depth - 1);
     }
 
     return nodes;

@@ -7,7 +7,7 @@ namespace chess {
 
 struct Position;
 
-std::uint64_t perft(chess::Position &pos, const int depth);
+std::uint64_t perft(const chess::Position &pos, const int depth);
 
 }  // namespace chess
 

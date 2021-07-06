@@ -8,7 +8,7 @@ struct Move;
 
 namespace search {
 
-[[nodiscard]] int alphabeta(chess::Position &pos, int alpha, int beta, int depth, chess::Move &pv);
+[[nodiscard]] int alphabeta(const chess::Position &pos, int alpha, int beta, int depth, chess::Move &pv);
 
 }  // namespace search
 
