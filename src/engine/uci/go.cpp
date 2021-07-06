@@ -6,8 +6,6 @@
 
 namespace uci {
 
-constexpr char promos[] = {'p', 'n', 'b', 'r', 'q', 'k'};
-
 void go(chess::Position &pos) {
     chess::Move bestmove;
     const int score = search::alphabeta(pos, -10000, 10000, 1, bestmove);
