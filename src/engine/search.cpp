@@ -1,23 +1,15 @@
-#include "alphabeta.hpp"
+#include "search.hpp"
 #include <chess/attack.hpp>
 #include <chess/makemove.hpp>
 #include <chess/move.hpp>
 #include <chess/movegen.hpp>
 #include <chess/position.hpp>
-#include "../eval/eval.hpp"
 
 namespace search {
 
-[[nodiscard]] int alphabeta(const chess::Position &pos, int alpha, int beta, int depth, chess::Move &pv) {
-    if (depth == 0) {
-        return eval::eval(pos);
-    }
-
+[[nodiscard]] chess::Move dumb(const chess::Position &pos) {
     chess::Move moves[256];
     const int num_moves = chess::movegen(pos, moves);
-    int best_score = -1000000;
-
-    // Move ordering
 
     for (int i = 0; i < num_moves; ++i) {
         auto npos = pos;
@@ -30,19 +22,10 @@ namespace search {
             continue;
         }
 
-        const auto score = -alphabeta(npos, -beta, -alpha, depth - 1, pv);
-
-        if (score > best_score) {
-            best_score = score;
-            pv = moves[i];
-        }
-
-        if (alpha >= beta) {
-            break;
-        }
+        return moves[i];
     }
 
-    return best_score;
+    return {};
 }
 
 }  // namespace search

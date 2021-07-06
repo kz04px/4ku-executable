@@ -21,6 +21,7 @@ add_executable(
     4ku
 
     main.cpp
+    search.cpp
 
     # Chess
     ../chess/attack.cpp
@@ -32,10 +33,4 @@ add_executable(
     uci/isready.cpp
     uci/listen.cpp
     uci/moves.cpp
-
-    # Eval
-    eval/eval.cpp
-
-    # Search
-    search/alphabeta.cpp
 )
