@@ -7,6 +7,30 @@
 
 namespace chess {
 
+[[nodiscard]] int generate_piece_moves(Move *movelist,
+                                       const Position &pos,
+                                       const Piece piece,
+                                       Bitboard (*func)(int, Bitboard)) {
+    int num_moves = 0;
+
+    for (const auto &fr : pos.colour[0] & pos.pieces[static_cast<int>(piece)]) {
+        auto moves = func(fr, pos.colour[0] | pos.colour[1]);
+        moves &= ~pos.colour[0];
+
+        for (const auto to : moves) {
+            const auto captured = piece_on(pos, to);
+            if (captured != Piece::None) {
+                movelist[num_moves] = Move(Move::Type::Capture, piece, fr, to, captured);
+            } else {
+                movelist[num_moves] = Move(Move::Type::Quiet, piece, fr, to);
+            }
+            num_moves++;
+        }
+    }
+
+    return num_moves;
+}
+
 int movegen(const Position &pos, Move *movelist) {
     int num_moves = 0;
 
@@ -87,89 +111,12 @@ int movegen(const Position &pos, Move *movelist) {
         }
     }
 
-    // Knights
-    for (const auto &fr : pos.colour[0] & pos.pieces[static_cast<int>(Piece::Knight)]) {
-        const auto bb = Bitboard(fr);
-        auto moves = bb.knight();
-        moves &= ~pos.colour[0];
-
-        for (const auto to : moves) {
-            const auto captured = piece_on(pos, to);
-            const auto capture = captured != Piece::None;
-            if (capture) {
-                movelist[num_moves] = Move(Move::Type::Capture, Piece::Knight, fr, to, captured);
-            } else {
-                movelist[num_moves] = Move(Move::Type::Quiet, Piece::Knight, fr, to);
-            }
-            num_moves++;
-        }
-    }
-
-    // Bishops
-    for (const auto &fr : pos.colour[0] & pos.pieces[static_cast<int>(Piece::Bishop)]) {
-        auto moves = raycast::bishop(fr, pos.colour[0] | pos.colour[1]);
-        moves &= ~pos.colour[0];
-
-        for (const auto to : moves) {
-            const auto captured = piece_on(pos, to);
-            const auto capture = captured != Piece::None;
-            if (capture) {
-                movelist[num_moves] = Move(Move::Type::Capture, Piece::Bishop, fr, to, captured);
-            } else {
-                movelist[num_moves] = Move(Move::Type::Quiet, Piece::Bishop, fr, to);
-            }
-            num_moves++;
-        }
-    }
-
-    // Rooks
-    for (const auto &fr : pos.colour[0] & pos.pieces[static_cast<int>(Piece::Rook)]) {
-        auto moves = raycast::rook(fr, pos.colour[0] | pos.colour[1]);
-        moves &= ~pos.colour[0];
-
-        for (const auto to : moves) {
-            const auto captured = piece_on(pos, to);
-            const auto capture = captured != Piece::None;
-            if (capture) {
-                movelist[num_moves] = Move(Move::Type::Capture, Piece::Rook, fr, to, captured);
-            } else {
-                movelist[num_moves] = Move(Move::Type::Quiet, Piece::Rook, fr, to);
-            }
-            num_moves++;
-        }
-    }
-
-    // Queens
-    for (const auto &fr : pos.colour[0] & pos.pieces[static_cast<int>(Piece::Queen)]) {
-        auto moves =
-            raycast::rook(fr, pos.colour[0] | pos.colour[1]) | raycast::bishop(fr, pos.colour[0] | pos.colour[1]);
-        moves &= ~pos.colour[0];
-
-        for (const auto to : moves) {
-            const auto captured = piece_on(pos, to);
-            const auto capture = captured != Piece::None;
-            if (capture) {
-                movelist[num_moves] = Move(Move::Type::Capture, Piece::Queen, fr, to, captured);
-            } else {
-                movelist[num_moves] = Move(Move::Type::Quiet, Piece::Queen, fr, to);
-            }
-            num_moves++;
-        }
-    }
-
-    // King
-    for (const auto &fr : pos.colour[0] & pos.pieces[static_cast<int>(Piece::King)]) {
-        for (const auto &to : Bitboard(fr).adjacent() & ~pos.colour[0]) {
-            const auto captured = piece_on(pos, to);
-            const auto capture = captured != Piece::None;
-            if (capture) {
-                movelist[num_moves] = Move(Move::Type::Capture, Piece::King, fr, to, captured);
-            } else {
-                movelist[num_moves] = Move(Move::Type::Quiet, Piece::King, fr, to);
-            }
-            num_moves++;
-        }
-    }
+    num_moves += generate_piece_moves(&movelist[num_moves], pos, Piece::Knight, raycast::knight);
+    num_moves += generate_piece_moves(&movelist[num_moves], pos, Piece::Bishop, raycast::bishop);
+    num_moves += generate_piece_moves(&movelist[num_moves], pos, Piece::Queen, raycast::bishop);
+    num_moves += generate_piece_moves(&movelist[num_moves], pos, Piece::Rook, raycast::rook);
+    num_moves += generate_piece_moves(&movelist[num_moves], pos, Piece::Queen, raycast::rook);
+    num_moves += generate_piece_moves(&movelist[num_moves], pos, Piece::King, raycast::king);
 
     const auto all = pos.colour[0] | pos.colour[1];
 

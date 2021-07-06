@@ -69,12 +69,20 @@ constexpr Bitboard SE(const int sq, const Bitboard blockers) {
     return mask;
 }
 
+constexpr Bitboard knight(const int sq, const Bitboard) {
+    return Bitboard(sq).knight();
+}
+
 constexpr Bitboard bishop(const int sq, const Bitboard blockers) {
     return NW(sq, blockers) | NE(sq, blockers) | SW(sq, blockers) | SE(sq, blockers);
 }
 
 constexpr Bitboard rook(const int sq, const Bitboard blockers) {
     return N(sq, blockers) | E(sq, blockers) | S(sq, blockers) | W(sq, blockers);
+}
+
+constexpr Bitboard king(const int sq, const Bitboard) {
+    return Bitboard(sq).adjacent();
 }
 
 }  // namespace chess::raycast
