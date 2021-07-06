@@ -1,5 +1,5 @@
 # 4ku
-Trying to fit a chess engine into 4,096 bytes and failing miserably. Uses gzexe to compress the executable.
+Trying to fit a chess engine into 4,096 bytes with some mild success. Uses [xz](https://linux.die.net/man/1/xz).
 
 ---
 
@@ -13,7 +13,7 @@ sh build-linux.sh
 ---
 
 ## Executable Size
-Varies from system to system, but for me it's currently at **4,972 bytes**.
+Varies from system to system, but for me it's currently at **3,886 bytes**.
 
 ---
 
