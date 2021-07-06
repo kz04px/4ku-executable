@@ -41,15 +41,9 @@ int movegen(const Position &pos, Move *movelist) {
     for (const auto &to : pawns.north() & empty) {
         // Promotion
         if (to >= 56) {
-            movelist[num_moves + 0] = Move(Move::Type::Promo, Piece::Pawn, to - 8, to);
-            movelist[num_moves + 0].promo = Piece::Queen;
-            movelist[num_moves + 1] = Move(Move::Type::Promo, Piece::Pawn, to - 8, to);
-            movelist[num_moves + 1].promo = Piece::Rook;
-            movelist[num_moves + 2] = Move(Move::Type::Promo, Piece::Pawn, to - 8, to);
-            movelist[num_moves + 2].promo = Piece::Bishop;
-            movelist[num_moves + 3] = Move(Move::Type::Promo, Piece::Pawn, to - 8, to);
-            movelist[num_moves + 3].promo = Piece::Knight;
-            num_moves += 4;
+            movelist[num_moves] = Move(Move::Type::Promo, Piece::Pawn, to - 8, to);
+            movelist[num_moves].promo = Piece::Queen;
+            num_moves++;
         } else {
             movelist[num_moves] = Move(Move::Type::Quiet, Piece::Pawn, to - 8, to);
             num_moves++;
@@ -66,15 +60,9 @@ int movegen(const Position &pos, Move *movelist) {
     for (const auto &to : pawns.ne() & pos.colour[1]) {
         // Promotion
         if (to >= 56) {
-            movelist[num_moves + 0] = Move(Move::Type::Promocapture, Piece::Pawn, to - 9, to, piece_on(pos, to));
-            movelist[num_moves + 0].promo = Piece::Queen;
-            movelist[num_moves + 1] = Move(Move::Type::Promocapture, Piece::Pawn, to - 9, to, piece_on(pos, to));
-            movelist[num_moves + 1].promo = Piece::Rook;
-            movelist[num_moves + 2] = Move(Move::Type::Promocapture, Piece::Pawn, to - 9, to, piece_on(pos, to));
-            movelist[num_moves + 2].promo = Piece::Bishop;
-            movelist[num_moves + 3] = Move(Move::Type::Promocapture, Piece::Pawn, to - 9, to, piece_on(pos, to));
-            movelist[num_moves + 3].promo = Piece::Knight;
-            num_moves += 4;
+            movelist[num_moves] = Move(Move::Type::Promocapture, Piece::Pawn, to - 9, to, piece_on(pos, to));
+            movelist[num_moves].promo = Piece::Queen;
+            num_moves++;
         } else {
             movelist[num_moves] = Move(Move::Type::Capture, Piece::Pawn, to - 9, to, piece_on(pos, to));
             num_moves++;
@@ -83,15 +71,9 @@ int movegen(const Position &pos, Move *movelist) {
     for (const auto to : pawns.nw() & pos.colour[1]) {
         // Promotion
         if (to >= 56) {
-            movelist[num_moves + 0] = Move(Move::Type::Promocapture, Piece::Pawn, to - 7, to, piece_on(pos, to));
-            movelist[num_moves + 0].promo = Piece::Queen;
-            movelist[num_moves + 1] = Move(Move::Type::Promocapture, Piece::Pawn, to - 7, to, piece_on(pos, to));
-            movelist[num_moves + 1].promo = Piece::Rook;
-            movelist[num_moves + 2] = Move(Move::Type::Promocapture, Piece::Pawn, to - 7, to, piece_on(pos, to));
-            movelist[num_moves + 2].promo = Piece::Bishop;
-            movelist[num_moves + 3] = Move(Move::Type::Promocapture, Piece::Pawn, to - 7, to, piece_on(pos, to));
-            movelist[num_moves + 3].promo = Piece::Knight;
-            num_moves += 4;
+            movelist[num_moves] = Move(Move::Type::Promocapture, Piece::Pawn, to - 7, to, piece_on(pos, to));
+            movelist[num_moves].promo = Piece::Queen;
+            num_moves++;
         } else {
             movelist[num_moves] = Move(Move::Type::Capture, Piece::Pawn, to - 7, to, piece_on(pos, to));
             num_moves++;
