@@ -39,7 +39,7 @@ int movegen(const Position &pos, Move *movelist) {
     }
 
     // Pawns -- Captures
-    for (const auto &to : pawns.north().east() & pos.colour[1]) {
+    for (const auto &to : pawns.ne() & pos.colour[1]) {
         // Promotion
         if (to >= 56) {
             movelist[num_moves + 0] = Move(Move::Type::Promocapture, Piece::Pawn, to - 9, to, piece_on(pos, to));
@@ -56,7 +56,7 @@ int movegen(const Position &pos, Move *movelist) {
             num_moves++;
         }
     }
-    for (const auto &to : pawns.north().west() & pos.colour[1]) {
+    for (const auto to : pawns.nw() & pos.colour[1]) {
         // Promotion
         if (to >= 56) {
             movelist[num_moves + 0] = Move(Move::Type::Promocapture, Piece::Pawn, to - 7, to, piece_on(pos, to));
@@ -77,11 +77,11 @@ int movegen(const Position &pos, Move *movelist) {
     // En passant
     if (pos.ep != -1) {
         const auto bb = Bitboard(40 + pos.ep);
-        if (bb.south().west() & pawns) {
+        if (bb & pawns.ne()) {
             movelist[num_moves] = Move(Move::Type::Enpassant, Piece::Pawn, 40 + pos.ep - 9, 40 + pos.ep);
             num_moves++;
         }
-        if (bb.south().east() & pawns) {
+        if (bb & pawns.nw()) {
             movelist[num_moves] = Move(Move::Type::Enpassant, Piece::Pawn, 40 + pos.ep - 7, 40 + pos.ep);
             num_moves++;
         }
