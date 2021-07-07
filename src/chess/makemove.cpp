@@ -10,14 +10,6 @@ void makemove(Position &pos, const Move &move) {
     pos.colour[0] ^= Bitboard(move.from) | Bitboard(move.to);
     pos.pieces[static_cast<int>(move.piece)] ^= Bitboard(move.from) | Bitboard(move.to);
 
-    // Update history
-    pos.history[pos.history_size].ep = pos.ep;
-    pos.history[pos.history_size].castling[0] = pos.castling[0];
-    pos.history[pos.history_size].castling[1] = pos.castling[1];
-    pos.history[pos.history_size].castling[2] = pos.castling[2];
-    pos.history[pos.history_size].castling[3] = pos.castling[3];
-    pos.history_size++;
-
     pos.ep = -1;
 
     switch (move.type) {

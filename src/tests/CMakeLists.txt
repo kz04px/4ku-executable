@@ -36,7 +36,6 @@ add_executable(
     ../chess/movegen.cpp
     ../chess/perft.cpp
     ../chess/set_fen.cpp
-    ../chess/undomove.cpp
 )
 
 set_property(TARGET tests PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE FALSE)

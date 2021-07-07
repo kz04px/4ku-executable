@@ -28,5 +28,4 @@ add_executable(
     ../chess/movegen.cpp
     ../chess/perft.cpp
     ../chess/set_fen.cpp
-    ../chess/undomove.cpp
 )

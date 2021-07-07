@@ -5,7 +5,6 @@
 #include <chess/move.hpp>
 #include <chess/movegen.hpp>
 #include <chess/position.hpp>
-#include <chess/undomove.hpp>
 #include <string>
 
 void valid(const chess::Position &pos, const chess::Move &move) {
@@ -71,20 +70,19 @@ void test(chess::Position &pos, const int depth) {
     const int num_moves = chess::movegen(pos, moves);
 
     for (int i = 0; i < num_moves; ++i) {
-        valid(pos, moves[i]);
+        auto npos = pos;
 
-        chess::makemove(pos, moves[i]);
+        valid(npos, moves[i]);
 
-        const int ksq = (pos.colour[1] & pos.pieces[static_cast<int>(chess::Piece::King)]).lsbll();
+        chess::makemove(npos, moves[i]);
 
-        if (chess::attacked(pos, ksq, false)) {
-            chess::undomove(pos, moves[i]);
+        const int ksq = (npos.colour[1] & npos.pieces[static_cast<int>(chess::Piece::King)]).lsbll();
+
+        if (chess::attacked(npos, ksq, false)) {
             continue;
         }
 
         test(pos, depth - 1);
-
-        chess::undomove(pos, moves[i]);
     }
 }
 

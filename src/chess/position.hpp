@@ -7,11 +7,6 @@
 
 namespace chess {
 
-struct History {
-    int ep = -1;
-    bool castling[4] = {true, true, true, true};
-};
-
 struct Position {
     Bitboard colour[2] = {0xFFFFULL, 0xFFFF000000000000ULL};
     Bitboard pieces[6] = {0xFF00000000FF00ULL,
@@ -20,8 +15,6 @@ struct Position {
                           0x8100000000000081ULL,
                           0x800000000000008ULL,
                           0x1000000000000010ULL};
-    History history[1024];
-    int history_size = 0;
     int halfmoves = 0;
     int ep = -1;
     bool castling[4] = {true, true, true, true};

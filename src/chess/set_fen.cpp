@@ -25,7 +25,6 @@ void set_fen(Position &pos, const std::string &fen) {
     pos.castling[2] = false;
     pos.castling[3] = false;
     pos.halfmoves = 0;
-    pos.history_size = 0;
 
     std::stringstream ss{fen};
     std::string word;
