@@ -158,7 +158,7 @@ class Bitboard {
     std::uint64_t m_mask;
 };
 
-static std::ostream &operator<<(std::ostream &os, const Bitboard &bb) {
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &os, const Bitboard &bb) {
     for (int r = 7; r >= 0; --r) {
         for (int f = 0; f < 8; ++f) {
             os << (bb & Bitboard(8 * r + f) ? 1 : 0);

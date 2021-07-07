@@ -58,7 +58,7 @@ static int colour_on(const Position &pos, const int sq) {
     }
 }
 
-static std::ostream &operator<<(std::ostream &os, const Position &pos) {
+[[maybe_unused]] static std::ostream &operator<<(std::ostream &os, const Position &pos) {
     for (int r = 7; r >= 0; --r) {
         for (int f = 0; f < 8; ++f) {
             const int sq = 8 * r + f;
@@ -94,7 +94,7 @@ static std::ostream &operator<<(std::ostream &os, const Position &pos) {
     return os;
 }
 
-static void flip(Position &pos) noexcept {
+[[maybe_unused]] static void flip(Position &pos) noexcept {
     pos.colour[0].flip();
     pos.colour[1].flip();
     pos.pieces[0].flip();

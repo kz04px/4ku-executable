@@ -22,10 +22,10 @@ struct Move {
     Move() : type{}, piece{}, from{}, to{}, captured{}, promo{} {
     }
 
-    Move(Type t, Piece p, int fr, int to) : type{t}, piece{p}, from{fr}, to{to}, captured{}, promo{} {
+    Move(Type ty, Piece p, int fr, int t) : type{ty}, piece{p}, from{fr}, to{t}, captured{}, promo{} {
     }
 
-    Move(Type t, Piece p, int fr, int to, Piece cap) : type{t}, piece{p}, from{fr}, to{to}, captured{cap}, promo{} {
+    Move(Type ty, Piece p, int fr, int t, Piece cap) : type{ty}, piece{p}, from{fr}, to{t}, captured{cap}, promo{} {
     }
 
     Type type;
@@ -36,7 +36,7 @@ struct Move {
     Piece promo;
 };
 
-static void move_str(const Move &move, char *str, const bool flip) {
+[[maybe_unused]] static void move_str(const Move &move, char *str, const bool flip) {
     static constexpr char promos[] = {'p', 'n', 'b', 'r', 'q', 'k'};
 
     str[0] = static_cast<char>((move.from % 8) + 'a');

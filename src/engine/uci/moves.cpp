@@ -17,7 +17,7 @@ void moves(chess::Position &pos) {
     while (!quit) {
         int word_size = 0;
         char c;
-        while (c = getchar()) {
+        while ((c = getchar())) {
             if (c == '\n' || c == '\0') {
                 quit = true;
                 break;

@@ -99,7 +99,6 @@ TEST_CASE("Move validity") {
     };
 
     chess::Position pos;
-    chess::Move moves[256];
 
     for (const auto &fen : fens) {
         INFO(fen);
