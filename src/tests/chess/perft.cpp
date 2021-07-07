@@ -47,7 +47,7 @@ TEST_CASE("perft -- Brief") {
     for (const auto &[fen, results] : tests) {
         chess::set_fen(pos, fen);
 
-        for (int i = 0; i < results.size(); ++i) {
+        for (std::size_t i = 0; i < results.size(); ++i) {
             INFO("Depth " + std::to_string(i + 1) + " -- " + fen);
             REQUIRE(results[i] == chess::perft(pos, i + 1));
         }
@@ -188,7 +188,7 @@ TEST_CASE("perft -- Hartmann") {
     for (const auto &[fen, results] : tests) {
         chess::set_fen(pos, fen);
 
-        for (int i = 0; i < results.size(); ++i) {
+        for (std::size_t i = 0; i < results.size(); ++i) {
             INFO("Depth " + std::to_string(i + 1) + " -- " + fen);
             REQUIRE(results[i] == chess::perft(pos, i + 1));
         }
