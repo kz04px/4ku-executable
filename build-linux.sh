@@ -2,6 +2,8 @@ mkdir -p build/linux
 
 cd build/linux
 
+rm ./engine/4ku
+
 cmake ../../src/.
 cmake --build . --config Release
 
