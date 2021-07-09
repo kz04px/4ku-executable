@@ -2,6 +2,7 @@
 #include "move.hpp"
 #include "piece.hpp"
 #include "position.hpp"
+#include "square.hpp"
 
 namespace chess {
 
@@ -56,10 +57,10 @@ void makemove(Position &pos, const Move &move) {
     }
 
     // Remove castling permissions
-    pos.castling[0] &= (move.to != 7 && move.from != 7 && move.from != 4);
-    pos.castling[1] &= (move.to != 0 && move.from != 0 && move.from != 4);
-    pos.castling[2] &= (move.to != 63 && move.from != 63 && move.from != 60);
-    pos.castling[3] &= (move.to != 56 && move.from != 56 && move.from != 60);
+    pos.castling[0] &= (move.to != Square::h1 && move.from != Square::h1 && move.from != Square::e1);
+    pos.castling[1] &= (move.to != Square::a1 && move.from != Square::a1 && move.from != Square::e1);
+    pos.castling[2] &= (move.to != Square::h8 && move.from != Square::h8 && move.from != Square::e8);
+    pos.castling[3] &= (move.to != Square::a8 && move.from != Square::a8 && move.from != Square::e8);
 
     // Flip the board
     flip(pos);

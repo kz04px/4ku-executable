@@ -6,6 +6,7 @@
 #include <chess/move.hpp>
 #include <chess/movegen.hpp>
 #include <chess/position.hpp>
+#include <chess/square.hpp>
 #include <string>
 
 void valid(const chess::Position &pos, const chess::Move &move) {
@@ -18,8 +19,8 @@ void valid(const chess::Position &pos, const chess::Move &move) {
         case chess::Move::Type::Quiet:
             break;
         case chess::Move::Type::Double:
-            REQUIRE((24 <= move.to && move.to <= 31));
-            REQUIRE((8 <= move.from && move.from <= 15));
+            REQUIRE((Square::a4 <= move.to && move.to <= Square::h4));
+            REQUIRE((Square::a2 <= move.from && move.from <= Square::h2));
             REQUIRE(move.piece == chess::Piece::Pawn);
             break;
         case chess::Move::Type::Capture:
@@ -27,29 +28,29 @@ void valid(const chess::Position &pos, const chess::Move &move) {
             REQUIRE(captured != chess::Piece::King);
             break;
         case chess::Move::Type::Enpassant:
-            REQUIRE((40 <= move.to && move.to <= 47));
-            REQUIRE((32 <= move.from && move.from <= 39));
+            REQUIRE((Square::a6 <= move.to && move.to <= Square::h6));
+            REQUIRE((Square::a5 <= move.from && move.from <= Square::h5));
             break;
         case chess::Move::Type::Ksc:
             REQUIRE(move.piece == chess::Piece::King);
-            REQUIRE(move.from == 4);
-            REQUIRE(move.to == 6);
+            REQUIRE(move.from == Square::e1);
+            REQUIRE(move.to == Square::g1);
             break;
         case chess::Move::Type::Qsc:
             REQUIRE(move.piece == chess::Piece::King);
-            REQUIRE(move.from == 4);
-            REQUIRE(move.to == 2);
+            REQUIRE(move.from == Square::e1);
+            REQUIRE(move.to == Square::c1);
             break;
         case chess::Move::Type::Promo:
-            REQUIRE((56 <= move.to && move.to <= 63));
-            REQUIRE((48 <= move.from && move.from <= 55));
+            REQUIRE((Square::a8 <= move.to && move.to <= Square::h8));
+            REQUIRE((Square::a7 <= move.from && move.from <= Square::h7));
             REQUIRE(move.piece == chess::Piece::Pawn);
             REQUIRE(move.promo != chess::Piece::Pawn);
             REQUIRE(move.promo != chess::Piece::King);
             break;
         case chess::Move::Type::Promocapture:
-            REQUIRE((56 <= move.to && move.to <= 63));
-            REQUIRE((48 <= move.from && move.from <= 55));
+            REQUIRE((Square::a8 <= move.to && move.to <= Square::h8));
+            REQUIRE((Square::a7 <= move.from && move.from <= Square::h7));
             REQUIRE(move.piece == chess::Piece::Pawn);
             REQUIRE(move.promo != chess::Piece::Pawn);
             REQUIRE(move.promo != chess::Piece::King);

@@ -4,6 +4,7 @@
 #include "piece.hpp"
 #include "position.hpp"
 #include "raycast.hpp"
+#include "square.hpp"
 
 namespace chess {
 
@@ -51,7 +52,7 @@ int movegen(const Position &pos, Move *movelist) {
         copy &= copy - 1;
 
         // Promotion
-        if (to >= 56) {
+        if (to >= Square::a8) {
             movelist[num_moves + 0] = Move(Move::Type::Promo, Piece::Pawn, to - 8, to);
             movelist[num_moves + 0].promo = Piece::Queen;
             movelist[num_moves + 1] = Move(Move::Type::Promo, Piece::Pawn, to - 8, to);
@@ -84,7 +85,7 @@ int movegen(const Position &pos, Move *movelist) {
         copy &= copy - 1;
 
         // Promotion
-        if (to >= 56) {
+        if (to >= Square::a8) {
             movelist[num_moves + 0] = Move(Move::Type::Promocapture, Piece::Pawn, to - 9, to, piece_on(pos, to));
             movelist[num_moves + 0].promo = Piece::Queen;
             movelist[num_moves + 1] = Move(Move::Type::Promocapture, Piece::Pawn, to - 9, to, piece_on(pos, to));
@@ -107,7 +108,7 @@ int movegen(const Position &pos, Move *movelist) {
         copy &= copy - 1;
 
         // Promotion
-        if (to >= 56) {
+        if (to >= Square::a8) {
             movelist[num_moves + 0] = Move(Move::Type::Promocapture, Piece::Pawn, to - 7, to, piece_on(pos, to));
             movelist[num_moves + 0].promo = Piece::Queen;
             movelist[num_moves + 1] = Move(Move::Type::Promocapture, Piece::Pawn, to - 7, to, piece_on(pos, to));
@@ -125,13 +126,15 @@ int movegen(const Position &pos, Move *movelist) {
 
     // En passant
     if (pos.ep != -1) {
-        const auto bb = Bitboard(1ULL << (40 + pos.ep));
+        const auto bb = Bitboard(1ULL << (Square::a6 + pos.ep));
         if (bb & ne(pawns)) {
-            movelist[num_moves] = Move(Move::Type::Enpassant, Piece::Pawn, 40 + pos.ep - 9, 40 + pos.ep);
+            movelist[num_moves] =
+                Move(Move::Type::Enpassant, Piece::Pawn, Square::a6 + pos.ep - 9, Square::a6 + pos.ep);
             num_moves++;
         }
         if (bb & nw(pawns)) {
-            movelist[num_moves] = Move(Move::Type::Enpassant, Piece::Pawn, 40 + pos.ep - 7, 40 + pos.ep);
+            movelist[num_moves] =
+                Move(Move::Type::Enpassant, Piece::Pawn, Square::a6 + pos.ep - 7, Square::a6 + pos.ep);
             num_moves++;
         }
     }
@@ -146,14 +149,14 @@ int movegen(const Position &pos, Move *movelist) {
     const auto all = pos.colour[0] | pos.colour[1];
 
     // Castling
-    if (pos.castling[0] && !(all & Bitboard(0x60ULL)) && !attacked(pos, 4, true) && !attacked(pos, 5, true) &&
-        !attacked(pos, 6, true)) {
-        movelist[num_moves] = Move(Move::Type::Ksc, Piece::King, 4, 6);
+    if (pos.castling[0] && !(all & Bitboard(0x60ULL)) && !attacked(pos, Square::e1, true) &&
+        !attacked(pos, Square::f1, true) && !attacked(pos, Square::g1, true)) {
+        movelist[num_moves] = Move(Move::Type::Ksc, Piece::King, Square::e1, Square::g1);
         num_moves++;
     }
-    if (pos.castling[1] && !(all & Bitboard(0xEULL)) && !attacked(pos, 4, true) && !attacked(pos, 3, true) &&
-        !attacked(pos, 2, true)) {
-        movelist[num_moves] = Move(Move::Type::Qsc, Piece::King, 4, 2);
+    if (pos.castling[1] && !(all & Bitboard(0xEULL)) && !attacked(pos, Square::e1, true) &&
+        !attacked(pos, Square::d1, true) && !attacked(pos, Square::c1, true)) {
+        movelist[num_moves] = Move(Move::Type::Qsc, Piece::King, Square::e1, Square::c1);
         num_moves++;
     }
 
