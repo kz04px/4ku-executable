@@ -14,13 +14,16 @@ void valid(const chess::Position &pos, const chess::Move &move) {
     const auto captured = chess::piece_on(pos, move.to);
 
     REQUIRE(piece == move.piece);
+    REQUIRE(move.to != move.from);
 
     switch (move.type) {
         case chess::Move::Type::Quiet:
+            REQUIRE(captured == chess::Piece::None);
             break;
         case chess::Move::Type::Double:
             REQUIRE((Square::a4 <= move.to && move.to <= Square::h4));
             REQUIRE((Square::a2 <= move.from && move.from <= Square::h2));
+            REQUIRE(move.to - move.from == 16);
             REQUIRE(move.piece == chess::Piece::Pawn);
             break;
         case chess::Move::Type::Capture:
@@ -30,6 +33,7 @@ void valid(const chess::Position &pos, const chess::Move &move) {
         case chess::Move::Type::Enpassant:
             REQUIRE((Square::a6 <= move.to && move.to <= Square::h6));
             REQUIRE((Square::a5 <= move.from && move.from <= Square::h5));
+            REQUIRE(((move.to - move.from == 7) || (move.to - move.from == 9)));
             break;
         case chess::Move::Type::Ksc:
             REQUIRE(move.piece == chess::Piece::King);
@@ -44,6 +48,7 @@ void valid(const chess::Position &pos, const chess::Move &move) {
         case chess::Move::Type::Promo:
             REQUIRE((Square::a8 <= move.to && move.to <= Square::h8));
             REQUIRE((Square::a7 <= move.from && move.from <= Square::h7));
+            REQUIRE(move.to - move.from == 8);
             REQUIRE(move.piece == chess::Piece::Pawn);
             REQUIRE(move.promo != chess::Piece::Pawn);
             REQUIRE(move.promo != chess::Piece::King);
@@ -51,6 +56,7 @@ void valid(const chess::Position &pos, const chess::Move &move) {
         case chess::Move::Type::Promocapture:
             REQUIRE((Square::a8 <= move.to && move.to <= Square::h8));
             REQUIRE((Square::a7 <= move.from && move.from <= Square::h7));
+            REQUIRE(((move.to - move.from == 7) || (move.to - move.from == 9)));
             REQUIRE(move.piece == chess::Piece::Pawn);
             REQUIRE(move.promo != chess::Piece::Pawn);
             REQUIRE(move.promo != chess::Piece::King);
