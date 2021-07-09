@@ -1,5 +1,6 @@
 #include <catch2/catch.hpp>
 #include <chess/attack.hpp>
+#include <chess/bitboard.hpp>
 #include <chess/fen.hpp>
 #include <chess/makemove.hpp>
 #include <chess/move.hpp>
@@ -76,7 +77,7 @@ void test(chess::Position &pos, const int depth) {
 
         chess::makemove(npos, moves[i]);
 
-        const int ksq = (npos.colour[1] & npos.pieces[static_cast<int>(chess::Piece::King)]).lsbll();
+        const int ksq = chess::lsbll(npos.colour[1] & npos.pieces[static_cast<int>(chess::Piece::King)]);
 
         if (chess::attacked(npos, ksq, false)) {
             continue;

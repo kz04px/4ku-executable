@@ -22,7 +22,7 @@ struct Position {
 };
 
 static Piece piece_on(const Position &pos, const int sq) noexcept {
-    const auto bb = Bitboard(sq);
+    const auto bb = Bitboard(1ULL << sq);
     if (pos.pieces[0] & bb) {
         return Piece::Pawn;
     } else if (pos.pieces[1] & bb) {
@@ -41,7 +41,7 @@ static Piece piece_on(const Position &pos, const int sq) noexcept {
 }
 
 static int colour_on(const Position &pos, const int sq) {
-    const auto bb = Bitboard(sq);
+    const auto bb = Bitboard(1ULL << sq);
     if (pos.colour[0] & bb) {
         return 0;
     } else if (pos.pieces[1] & bb) {
@@ -88,14 +88,14 @@ static int colour_on(const Position &pos, const int sq) {
 }
 
 [[maybe_unused]] static void flip(Position &pos) noexcept {
-    pos.colour[0].flip();
-    pos.colour[1].flip();
-    pos.pieces[0].flip();
-    pos.pieces[1].flip();
-    pos.pieces[2].flip();
-    pos.pieces[3].flip();
-    pos.pieces[4].flip();
-    pos.pieces[5].flip();
+    pos.colour[0] = flip(pos.colour[0]);
+    pos.colour[1] = flip(pos.colour[1]);
+    pos.pieces[0] = flip(pos.pieces[0]);
+    pos.pieces[1] = flip(pos.pieces[1]);
+    pos.pieces[2] = flip(pos.pieces[2]);
+    pos.pieces[3] = flip(pos.pieces[3]);
+    pos.pieces[4] = flip(pos.pieces[4]);
+    pos.pieces[5] = flip(pos.pieces[5]);
     {
         const auto c = pos.colour[0];
         pos.colour[0] = pos.colour[1];

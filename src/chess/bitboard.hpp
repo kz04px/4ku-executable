@@ -6,162 +6,66 @@
 
 namespace chess {
 
-class BitboardIterator {
-   public:
-    constexpr BitboardIterator(const std::uint64_t &data) : m_data{data} {
-    }
+using Bitboard = std::uint64_t;
 
-    [[nodiscard]] constexpr int operator*() const noexcept {
-        return __builtin_ctzll(m_data);
-    }
+[[nodiscard]] constexpr Bitboard flip(Bitboard bb) noexcept {
+    return __builtin_bswap64(bb);
+}
 
-    constexpr BitboardIterator operator++() noexcept {
-        m_data &= m_data - 1;
-        return *this;
-    }
+[[nodiscard]] constexpr int lsbll(Bitboard bb) noexcept {
+    return __builtin_ctzll(bb);
+}
 
-    [[nodiscard]] constexpr bool operator!=(const BitboardIterator &rhs) const noexcept {
-        return m_data != rhs.m_data;
-    }
+[[nodiscard]] constexpr auto count(Bitboard bb) noexcept {
+    return __builtin_popcountll(bb);
+}
 
-   private:
-    std::uint64_t m_data;
-};
+[[nodiscard]] constexpr Bitboard north(Bitboard bb) noexcept {
+    return bb << 8;
+}
 
-class Bitboard {
-   public:
-    constexpr Bitboard() : m_mask{} {
-    }
+[[nodiscard]] constexpr Bitboard south(Bitboard bb) noexcept {
+    return bb >> 8;
+}
 
-    constexpr Bitboard(const int sq) : m_mask{1ULL << sq} {
-    }
+[[nodiscard]] constexpr Bitboard east(Bitboard bb) noexcept {
+    return (bb << 1) & ~0x0101010101010101ULL;
+}
 
-    constexpr Bitboard(const long long unsigned int mask) : m_mask{mask} {
-    }
+[[nodiscard]] constexpr Bitboard west(Bitboard bb) noexcept {
+    return (bb >> 1) & ~0x8080808080808080ULL;
+}
 
-    constexpr Bitboard(const std::uint64_t mask) : m_mask{mask} {
-    }
+[[nodiscard]] constexpr Bitboard nw(Bitboard bb) noexcept {
+    return (bb << 7) & ~0x8080808080808080ULL;
+}
 
-    void flip() noexcept {
-        m_mask = __builtin_bswap64(m_mask);
-    }
+[[nodiscard]] constexpr Bitboard ne(Bitboard bb) noexcept {
+    return (bb << 9) & ~0x0101010101010101ULL;
+}
 
-    void clear() noexcept {
-        m_mask = 0;
-    }
+[[nodiscard]] constexpr Bitboard sw(Bitboard bb) noexcept {
+    return (bb >> 9) & ~0x8080808080808080ULL;
+}
 
-    constexpr Bitboard operator|=(const Bitboard &rhs) noexcept {
-        m_mask |= rhs.m_mask;
-        return *this;
-    }
+[[nodiscard]] constexpr Bitboard se(Bitboard bb) noexcept {
+    return (bb >> 7) & ~0x0101010101010101ULL;
+}
 
-    constexpr Bitboard operator^=(const Bitboard &rhs) noexcept {
-        m_mask ^= rhs.m_mask;
-        return *this;
-    }
+[[nodiscard]] constexpr Bitboard adjacent(Bitboard bb) noexcept {
+    return (bb << 8) | (bb >> 8) | (((bb >> 1) | (bb >> 9) | (bb << 7)) & 0x7F7F7F7F7F7F7F7FULL) |
+           (((bb << 1) | (bb << 9) | (bb >> 7)) & 0xFEFEFEFEFEFEFEFEULL);
+}
 
-    constexpr Bitboard operator&=(const Bitboard &rhs) noexcept {
-        m_mask &= rhs.m_mask;
-        return *this;
-    }
-
-    [[nodiscard]] constexpr Bitboard flipped() const noexcept {
-        return __builtin_bswap64(m_mask);
-    }
-
-    [[nodiscard]] constexpr int lsbll() const noexcept {
-        return __builtin_ctzll(m_mask);
-    }
-
-    [[nodiscard]] constexpr auto count() const noexcept {
-        return __builtin_popcountll(m_mask);
-    }
-
-    [[nodiscard]] constexpr operator bool() const noexcept {
-        return m_mask != 0;
-    }
-
-    [[nodiscard]] constexpr bool operator==(const Bitboard &rhs) const noexcept {
-        return m_mask == rhs.m_mask;
-    }
-
-    [[nodiscard]] constexpr Bitboard north() const noexcept {
-        return m_mask << 8;
-    }
-
-    [[nodiscard]] constexpr Bitboard south() const noexcept {
-        return m_mask >> 8;
-    }
-
-    [[nodiscard]] constexpr Bitboard east() const noexcept {
-        return (m_mask << 1) & ~0x0101010101010101ULL;
-    }
-
-    [[nodiscard]] constexpr Bitboard west() const noexcept {
-        return (m_mask >> 1) & ~0x8080808080808080ULL;
-    }
-
-    [[nodiscard]] constexpr Bitboard nw() const noexcept {
-        return (m_mask << 7) & ~0x8080808080808080ULL;
-    }
-
-    [[nodiscard]] constexpr Bitboard ne() const noexcept {
-        return (m_mask << 9) & ~0x0101010101010101ULL;
-    }
-
-    [[nodiscard]] constexpr Bitboard sw() const noexcept {
-        return (m_mask >> 9) & ~0x8080808080808080ULL;
-    }
-
-    [[nodiscard]] constexpr Bitboard se() const noexcept {
-        return (m_mask >> 7) & ~0x0101010101010101ULL;
-    }
-
-    [[nodiscard]] constexpr Bitboard adjacent() const noexcept {
-        return (m_mask << 8) | (m_mask >> 8) |
-               (((m_mask >> 1) | (m_mask >> 9) | (m_mask << 7)) & 0x7F7F7F7F7F7F7F7FULL) |
-               (((m_mask << 1) | (m_mask << 9) | (m_mask >> 7)) & 0xFEFEFEFEFEFEFEFEULL);
-    }
-
-    [[nodiscard]] constexpr Bitboard knight() const noexcept {
-        return (((m_mask << 15) | (m_mask >> 17)) & 0x7F7F7F7F7F7F7F7FULL) |
-               (((m_mask << 17) | (m_mask >> 15)) & 0xFEFEFEFEFEFEFEFEULL) |
-               (((m_mask << 10) | (m_mask >> 6)) & 0xFCFCFCFCFCFCFCFCULL) |
-               (((m_mask << 6) | (m_mask >> 10)) & 0x3F3F3F3F3F3F3F3FULL);
-    }
-
-    [[nodiscard]] constexpr Bitboard operator|(const Bitboard &rhs) const noexcept {
-        return m_mask | rhs.m_mask;
-    }
-
-    [[nodiscard]] constexpr Bitboard operator^(const Bitboard &rhs) const noexcept {
-        return m_mask ^ rhs.m_mask;
-    }
-
-    [[nodiscard]] constexpr Bitboard operator&(const Bitboard &rhs) const noexcept {
-        return m_mask & rhs.m_mask;
-    }
-
-    [[nodiscard]] constexpr Bitboard operator~() const noexcept {
-        return ~m_mask;
-    }
-
-    [[nodiscard]] constexpr BitboardIterator begin() const noexcept {
-        return BitboardIterator{m_mask};
-    }
-
-    [[nodiscard]] constexpr BitboardIterator end() const noexcept {
-        return BitboardIterator{0};
-    }
-
-   private:
-    std::uint64_t m_mask;
-};
+[[nodiscard]] constexpr Bitboard knight(Bitboard bb) noexcept {
+    return (((bb << 15) | (bb >> 17)) & 0x7F7F7F7F7F7F7F7FULL) | (((bb << 17) | (bb >> 15)) & 0xFEFEFEFEFEFEFEFEULL) |
+           (((bb << 10) | (bb >> 6)) & 0xFCFCFCFCFCFCFCFCULL) | (((bb << 6) | (bb >> 10)) & 0x3F3F3F3F3F3F3F3FULL);
+}
 
 [[maybe_unused]] static std::ostream &operator<<(std::ostream &os, const Bitboard &bb) {
     for (int r = 7; r >= 0; --r) {
         for (int f = 0; f < 8; ++f) {
-            os << (bb & Bitboard(8 * r + f) ? 1 : 0);
+            os << (bb & Bitboard(1ULL << (8 * r + f)) ? 1 : 0);
         }
         os << '\n';
     }

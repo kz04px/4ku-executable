@@ -21,7 +21,7 @@ std::uint64_t perft(const Position &pos, const int depth) {
 
         makemove(npos, moves[i]);
 
-        const int ksq = (npos.colour[1] & npos.pieces[static_cast<int>(chess::Piece::King)]).lsbll();
+        const int ksq = lsbll(npos.colour[1] & npos.pieces[static_cast<int>(chess::Piece::King)]);
 
         if (chess::attacked(npos, ksq, false)) {
             continue;

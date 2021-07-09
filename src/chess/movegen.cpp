@@ -13,11 +13,18 @@ namespace chess {
                                        Bitboard (*func)(int, Bitboard)) {
     int num_moves = 0;
 
-    for (const auto &fr : pos.colour[0] & pos.pieces[static_cast<int>(piece)]) {
+    auto copy = pos.colour[0] & pos.pieces[static_cast<int>(piece)];
+    while (copy) {
+        auto fr = lsbll(copy);
+        copy &= copy - 1;
+
         auto moves = func(fr, pos.colour[0] | pos.colour[1]);
         moves &= ~pos.colour[0];
 
-        for (const auto to : moves) {
+        while (moves) {
+            auto to = lsbll(moves);
+            moves &= moves - 1;
+
             const auto captured = piece_on(pos, to);
             if (captured != Piece::None) {
                 movelist[num_moves] = Move(Move::Type::Capture, piece, fr, to, captured);
@@ -38,7 +45,11 @@ int movegen(const Position &pos, Move *movelist) {
     const auto pawns = pos.colour[0] & pos.pieces[static_cast<int>(Piece::Pawn)];
 
     // Pawns -- Single
-    for (const auto &to : pawns.north() & empty) {
+    auto copy = north(pawns) & empty;
+    while (copy) {
+        auto to = lsbll(copy);
+        copy &= copy - 1;
+
         // Promotion
         if (to >= 56) {
             movelist[num_moves + 0] = Move(Move::Type::Promo, Piece::Pawn, to - 8, to);
@@ -57,13 +68,21 @@ int movegen(const Position &pos, Move *movelist) {
     }
 
     // Pawns -- Double
-    for (const auto &fr : (empty.south() & empty).south() & pawns & Bitboard(0xFF00ULL)) {
+    copy = south((south(empty) & empty)) & pawns & Bitboard(0xFF00ULL);
+    while (copy) {
+        auto fr = lsbll(copy);
+        copy &= copy - 1;
+
         movelist[num_moves] = Move(Move::Type::Double, Piece::Pawn, fr, fr + 16);
         num_moves++;
     }
 
     // Pawns -- Captures
-    for (const auto &to : pawns.ne() & pos.colour[1]) {
+    copy = ne(pawns) & pos.colour[1];
+    while (copy) {
+        auto to = lsbll(copy);
+        copy &= copy - 1;
+
         // Promotion
         if (to >= 56) {
             movelist[num_moves + 0] = Move(Move::Type::Promocapture, Piece::Pawn, to - 9, to, piece_on(pos, to));
@@ -80,7 +99,13 @@ int movegen(const Position &pos, Move *movelist) {
             num_moves++;
         }
     }
-    for (const auto to : pawns.nw() & pos.colour[1]) {
+
+    // Pawns -- Captures
+    copy = nw(pawns) & pos.colour[1];
+    while (copy) {
+        auto to = lsbll(copy);
+        copy &= copy - 1;
+
         // Promotion
         if (to >= 56) {
             movelist[num_moves + 0] = Move(Move::Type::Promocapture, Piece::Pawn, to - 7, to, piece_on(pos, to));
@@ -100,12 +125,12 @@ int movegen(const Position &pos, Move *movelist) {
 
     // En passant
     if (pos.ep != -1) {
-        const auto bb = Bitboard(40 + pos.ep);
-        if (bb & pawns.ne()) {
+        const auto bb = Bitboard(1ULL << (40 + pos.ep));
+        if (bb & ne(pawns)) {
             movelist[num_moves] = Move(Move::Type::Enpassant, Piece::Pawn, 40 + pos.ep - 9, 40 + pos.ep);
             num_moves++;
         }
-        if (bb & pawns.nw()) {
+        if (bb & nw(pawns)) {
             movelist[num_moves] = Move(Move::Type::Enpassant, Piece::Pawn, 40 + pos.ep - 7, 40 + pos.ep);
             num_moves++;
         }

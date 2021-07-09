@@ -7,8 +7,8 @@ namespace chess {
 
 void makemove(Position &pos, const Move &move) {
     // Move our piece
-    pos.colour[0] ^= Bitboard(move.from) | Bitboard(move.to);
-    pos.pieces[static_cast<int>(move.piece)] ^= Bitboard(move.from) | Bitboard(move.to);
+    pos.colour[0] ^= Bitboard(1ULL << move.from) | Bitboard(1ULL << move.to);
+    pos.pieces[static_cast<int>(move.piece)] ^= Bitboard(1ULL << move.from) | Bitboard(1ULL << move.to);
 
     pos.ep = -1;
 
@@ -20,13 +20,13 @@ void makemove(Position &pos, const Move &move) {
             break;
         case Move::Type::Capture:
             // Remove their piece
-            pos.colour[1] ^= Bitboard(move.to);
-            pos.pieces[static_cast<int>(move.captured)] ^= Bitboard(move.to);
+            pos.colour[1] ^= Bitboard(1ULL << move.to);
+            pos.pieces[static_cast<int>(move.captured)] ^= Bitboard(1ULL << move.to);
             break;
         case Move::Type::Enpassant:
             // Remove their pawn
-            pos.colour[1] ^= Bitboard(move.to - 8);
-            pos.pieces[static_cast<int>(Piece::Pawn)] ^= Bitboard(move.to - 8);
+            pos.colour[1] ^= Bitboard(1ULL << (move.to - 8));
+            pos.pieces[static_cast<int>(Piece::Pawn)] ^= Bitboard(1ULL << (move.to - 8));
             break;
         case Move::Type::Ksc:
             // Move the rook
@@ -40,16 +40,16 @@ void makemove(Position &pos, const Move &move) {
             break;
         case Move::Type::Promo:
             // Replace pawn with new piece
-            pos.pieces[static_cast<int>(Piece::Pawn)] ^= Bitboard(move.to);
-            pos.pieces[static_cast<int>(move.promo)] ^= Bitboard(move.to);
+            pos.pieces[static_cast<int>(Piece::Pawn)] ^= Bitboard(1ULL << move.to);
+            pos.pieces[static_cast<int>(move.promo)] ^= Bitboard(1ULL << move.to);
             break;
         case Move::Type::Promocapture:
             // Replace pawn with new piece
-            pos.pieces[static_cast<int>(Piece::Pawn)] ^= Bitboard(move.to);
-            pos.pieces[static_cast<int>(move.promo)] ^= Bitboard(move.to);
+            pos.pieces[static_cast<int>(Piece::Pawn)] ^= Bitboard(1ULL << move.to);
+            pos.pieces[static_cast<int>(move.promo)] ^= Bitboard(1ULL << move.to);
             // Remove their piece
-            pos.colour[1] ^= Bitboard(move.to);
-            pos.pieces[static_cast<int>(move.captured)] ^= Bitboard(move.to);
+            pos.colour[1] ^= Bitboard(1ULL << move.to);
+            pos.pieces[static_cast<int>(move.captured)] ^= Bitboard(1ULL << move.to);
             break;
         default:
             break;

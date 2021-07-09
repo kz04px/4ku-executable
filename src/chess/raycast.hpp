@@ -6,71 +6,71 @@
 namespace chess::raycast {
 
 constexpr Bitboard N(const int sq, const Bitboard blockers) {
-    auto mask = Bitboard(sq).north();
+    auto mask = north(Bitboard(1ULL << sq));
     for (int i = 1; i < 8; ++i) {
-        mask |= (mask & ~blockers).north();
+        mask |= north(mask & ~blockers);
     }
     return mask;
 }
 
 constexpr Bitboard S(const int sq, const Bitboard blockers) {
-    auto mask = Bitboard(sq).south();
+    auto mask = south(Bitboard(1ULL << sq));
     for (int i = 1; i < 8; ++i) {
-        mask |= (mask & ~blockers).south();
+        mask |= south(mask & ~blockers);
     }
     return mask;
 }
 
 constexpr Bitboard E(const int sq, const Bitboard blockers) {
-    auto mask = Bitboard(sq).east();
+    auto mask = east(Bitboard(1ULL << sq));
     for (int i = 1; i < 8; ++i) {
-        mask |= (mask & ~blockers).east();
+        mask |= east(mask & ~blockers);
     }
     return mask;
 }
 
 constexpr Bitboard W(const int sq, const Bitboard blockers) {
-    auto mask = Bitboard(sq).west();
+    auto mask = west(Bitboard(1ULL << sq));
     for (int i = 1; i < 8; ++i) {
-        mask |= (mask & ~blockers).west();
+        mask |= west(mask & ~blockers);
     }
     return mask;
 }
 
 constexpr Bitboard NW(const int sq, const Bitboard blockers) {
-    auto mask = Bitboard(sq).nw();
+    auto mask = nw(Bitboard(1ULL << sq));
     for (int i = 1; i < 8; ++i) {
-        mask |= (mask & ~blockers).nw();
+        mask |= nw(mask & ~blockers);
     }
     return mask;
 }
 
 constexpr Bitboard NE(const int sq, const Bitboard blockers) {
-    auto mask = Bitboard(sq).ne();
+    auto mask = ne(Bitboard(1ULL << sq));
     for (int i = 1; i < 8; ++i) {
-        mask |= (mask & ~blockers).ne();
+        mask |= ne(mask & ~blockers);
     }
     return mask;
 }
 
 constexpr Bitboard SW(const int sq, const Bitboard blockers) {
-    auto mask = Bitboard(sq).sw();
+    auto mask = sw(Bitboard(1ULL << sq));
     for (int i = 1; i < 8; ++i) {
-        mask |= (mask & ~blockers).sw();
+        mask |= sw(mask & ~blockers);
     }
     return mask;
 }
 
 constexpr Bitboard SE(const int sq, const Bitboard blockers) {
-    auto mask = Bitboard(sq).se();
+    auto mask = se(Bitboard(1ULL << sq));
     for (int i = 1; i < 8; ++i) {
-        mask |= (mask & ~blockers).se();
+        mask |= se(mask & ~blockers);
     }
     return mask;
 }
 
 constexpr Bitboard knight(const int sq, const Bitboard) {
-    return Bitboard(sq).knight();
+    return chess::knight(Bitboard(1ULL << sq));
 }
 
 constexpr Bitboard bishop(const int sq, const Bitboard blockers) {
@@ -82,7 +82,7 @@ constexpr Bitboard rook(const int sq, const Bitboard blockers) {
 }
 
 constexpr Bitboard king(const int sq, const Bitboard) {
-    return Bitboard(sq).adjacent();
+    return adjacent(Bitboard(1ULL << sq));
 }
 
 }  // namespace chess::raycast

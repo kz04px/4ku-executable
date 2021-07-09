@@ -1,5 +1,6 @@
 #include "search.hpp"
 #include <chess/attack.hpp>
+#include <chess/bitboard.hpp>
 #include <chess/makemove.hpp>
 #include <chess/move.hpp>
 #include <chess/movegen.hpp>
@@ -16,7 +17,7 @@ namespace search {
 
         chess::makemove(npos, moves[i]);
 
-        const int ksq = (npos.colour[1] & npos.pieces[static_cast<int>(chess::Piece::King)]).lsbll();
+        const int ksq = chess::lsbll(npos.colour[1] & npos.pieces[static_cast<int>(chess::Piece::King)]);
 
         if (chess::attacked(npos, ksq, false)) {
             continue;

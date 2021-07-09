@@ -12,14 +12,14 @@ void set_fen(Position &pos, const std::string &fen) {
     }
 
     // Clear
-    pos.colour[0].clear();
-    pos.colour[1].clear();
-    pos.pieces[0].clear();
-    pos.pieces[1].clear();
-    pos.pieces[2].clear();
-    pos.pieces[3].clear();
-    pos.pieces[4].clear();
-    pos.pieces[5].clear();
+    pos.colour[0] = 0ULL;
+    pos.colour[1] = 0ULL;
+    pos.pieces[0] = 0ULL;
+    pos.pieces[1] = 0ULL;
+    pos.pieces[2] = 0ULL;
+    pos.pieces[3] = 0ULL;
+    pos.pieces[4] = 0ULL;
+    pos.pieces[5] = 0ULL;
     pos.castling[0] = false;
     pos.castling[1] = false;
     pos.castling[2] = false;
@@ -35,63 +35,63 @@ void set_fen(Position &pos, const std::string &fen) {
     for (const auto &c : word) {
         switch (c) {
             case 'P':
-                pos.colour[0] ^= Bitboard(i);
-                pos.pieces[static_cast<int>(Piece::Pawn)] ^= Bitboard(i);
+                pos.colour[0] ^= Bitboard(1ULL << i);
+                pos.pieces[static_cast<int>(Piece::Pawn)] ^= Bitboard(1ULL << i);
                 i++;
                 break;
             case 'p':
-                pos.colour[1] ^= Bitboard(i);
-                pos.pieces[static_cast<int>(Piece::Pawn)] ^= Bitboard(i);
+                pos.colour[1] ^= Bitboard(1ULL << i);
+                pos.pieces[static_cast<int>(Piece::Pawn)] ^= Bitboard(1ULL << i);
                 i++;
                 break;
             case 'N':
-                pos.colour[0] ^= Bitboard(i);
-                pos.pieces[static_cast<int>(Piece::Knight)] ^= Bitboard(i);
+                pos.colour[0] ^= Bitboard(1ULL << i);
+                pos.pieces[static_cast<int>(Piece::Knight)] ^= Bitboard(1ULL << i);
                 i++;
                 break;
             case 'n':
-                pos.colour[1] ^= Bitboard(i);
-                pos.pieces[static_cast<int>(Piece::Knight)] ^= Bitboard(i);
+                pos.colour[1] ^= Bitboard(1ULL << i);
+                pos.pieces[static_cast<int>(Piece::Knight)] ^= Bitboard(1ULL << i);
                 i++;
                 break;
             case 'B':
-                pos.colour[0] ^= Bitboard(i);
-                pos.pieces[static_cast<int>(Piece::Bishop)] ^= Bitboard(i);
+                pos.colour[0] ^= Bitboard(1ULL << i);
+                pos.pieces[static_cast<int>(Piece::Bishop)] ^= Bitboard(1ULL << i);
                 i++;
                 break;
             case 'b':
-                pos.colour[1] ^= Bitboard(i);
-                pos.pieces[static_cast<int>(Piece::Bishop)] ^= Bitboard(i);
+                pos.colour[1] ^= Bitboard(1ULL << i);
+                pos.pieces[static_cast<int>(Piece::Bishop)] ^= Bitboard(1ULL << i);
                 i++;
                 break;
             case 'R':
-                pos.colour[0] ^= Bitboard(i);
-                pos.pieces[static_cast<int>(Piece::Rook)] ^= Bitboard(i);
+                pos.colour[0] ^= Bitboard(1ULL << i);
+                pos.pieces[static_cast<int>(Piece::Rook)] ^= Bitboard(1ULL << i);
                 i++;
                 break;
             case 'r':
-                pos.colour[1] ^= Bitboard(i);
-                pos.pieces[static_cast<int>(Piece::Rook)] ^= Bitboard(i);
+                pos.colour[1] ^= Bitboard(1ULL << i);
+                pos.pieces[static_cast<int>(Piece::Rook)] ^= Bitboard(1ULL << i);
                 i++;
                 break;
             case 'Q':
-                pos.colour[0] ^= Bitboard(i);
-                pos.pieces[static_cast<int>(Piece::Queen)] ^= Bitboard(i);
+                pos.colour[0] ^= Bitboard(1ULL << i);
+                pos.pieces[static_cast<int>(Piece::Queen)] ^= Bitboard(1ULL << i);
                 i++;
                 break;
             case 'q':
-                pos.colour[1] ^= Bitboard(i);
-                pos.pieces[static_cast<int>(Piece::Queen)] ^= Bitboard(i);
+                pos.colour[1] ^= Bitboard(1ULL << i);
+                pos.pieces[static_cast<int>(Piece::Queen)] ^= Bitboard(1ULL << i);
                 i++;
                 break;
             case 'K':
-                pos.colour[0] ^= Bitboard(i);
-                pos.pieces[static_cast<int>(Piece::King)] ^= Bitboard(i);
+                pos.colour[0] ^= Bitboard(1ULL << i);
+                pos.pieces[static_cast<int>(Piece::King)] ^= Bitboard(1ULL << i);
                 i++;
                 break;
             case 'k':
-                pos.colour[1] ^= Bitboard(i);
-                pos.pieces[static_cast<int>(Piece::King)] ^= Bitboard(i);
+                pos.colour[1] ^= Bitboard(1ULL << i);
+                pos.pieces[static_cast<int>(Piece::King)] ^= Bitboard(1ULL << i);
                 i++;
                 break;
             case '1':
@@ -162,7 +162,7 @@ std::string get_fen(const Position &pos) {
     // Part 1 -- Piece locations
     int empty = 0;
     for (int i = 56; i >= 0; ++i) {
-        const auto bb = Bitboard(i);
+        const auto bb = Bitboard(1ULL << i);
 
         if (npos.pieces[static_cast<int>(Piece::Pawn)] & bb) {
             if (empty > 0) {
