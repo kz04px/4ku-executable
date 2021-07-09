@@ -31,13 +31,13 @@ void makemove(Position &pos, const Move &move) {
             break;
         case Move::Type::Ksc:
             // Move the rook
-            pos.colour[0] ^= Bitboard((1ULL << 7) | (1ULL << 5));
-            pos.pieces[static_cast<int>(Piece::Rook)] ^= Bitboard((1ULL << 7) | (1ULL << 5));
+            pos.colour[0] ^= Bitboard((1ULL << Square::h1) | (1ULL << Square::f1));
+            pos.pieces[static_cast<int>(Piece::Rook)] ^= Bitboard((1ULL << Square::h1) | (1ULL << Square::f1));
             break;
         case Move::Type::Qsc:
             // Move the rook
-            pos.colour[0] ^= Bitboard((1ULL << 0) | (1ULL << 3));
-            pos.pieces[static_cast<int>(Piece::Rook)] ^= Bitboard((1ULL << 0) | (1ULL << 3));
+            pos.colour[0] ^= Bitboard((1ULL << Square::a1) | (1ULL << Square::d1));
+            pos.pieces[static_cast<int>(Piece::Rook)] ^= Bitboard((1ULL << Square::a1) | (1ULL << Square::d1));
             break;
         case Move::Type::Promo:
             // Replace pawn with new piece
