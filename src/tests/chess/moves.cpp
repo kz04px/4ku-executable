@@ -32,12 +32,12 @@ void valid(const chess::Position &pos, const chess::Move &move) {
             break;
         case chess::Move::Type::Ksc:
             REQUIRE(move.piece == chess::Piece::King);
-            REQUIRE(move.to == 4);
+            REQUIRE(move.from == 4);
             REQUIRE(move.to == 6);
             break;
         case chess::Move::Type::Qsc:
             REQUIRE(move.piece == chess::Piece::King);
-            REQUIRE(move.to == 4);
+            REQUIRE(move.from == 4);
             REQUIRE(move.to == 2);
             break;
         case chess::Move::Type::Promo:
@@ -95,6 +95,8 @@ TEST_CASE("Move validity") {
         "rnbqkbnr/ppp1pppp/8/8/3pP3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0",
         "4k3/2b3q1/3P1P2/4K3/3P1P2/2b3q1/8/8 w - - 0 1",
         "k7/8/4r3/3pP3/8/8/8/4K3 w - d6 0 1",
+        "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1",
+        "r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1",
     };
 
     chess::Position pos;
