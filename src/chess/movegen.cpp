@@ -28,9 +28,9 @@ namespace chess {
 
             const auto captured = piece_on(pos, to);
             if (captured != Piece::None) {
-                movelist[num_moves] = Move(Move::Type::Capture, piece, fr, to, captured);
+                movelist[num_moves] = Move{Move::Type::Capture, piece, fr, to, captured, Piece::None};
             } else {
-                movelist[num_moves] = Move(Move::Type::Quiet, piece, fr, to);
+                movelist[num_moves] = Move{Move::Type::Quiet, piece, fr, to, Piece::None, Piece::None};
             }
             num_moves++;
         }
@@ -53,17 +53,13 @@ int movegen(const Position &pos, Move *movelist) {
 
         // Promotion
         if (to >= Square::a8) {
-            movelist[num_moves + 0] = Move(Move::Type::Promo, Piece::Pawn, to - 8, to);
-            movelist[num_moves + 0].promo = Piece::Queen;
-            movelist[num_moves + 1] = Move(Move::Type::Promo, Piece::Pawn, to - 8, to);
-            movelist[num_moves + 1].promo = Piece::Rook;
-            movelist[num_moves + 2] = Move(Move::Type::Promo, Piece::Pawn, to - 8, to);
-            movelist[num_moves + 2].promo = Piece::Bishop;
-            movelist[num_moves + 3] = Move(Move::Type::Promo, Piece::Pawn, to - 8, to);
-            movelist[num_moves + 3].promo = Piece::Knight;
+            movelist[num_moves + 0] = Move{Move::Type::Promo, Piece::Pawn, to - 8, to, Piece::None, Piece::Queen};
+            movelist[num_moves + 1] = Move{Move::Type::Promo, Piece::Pawn, to - 8, to, Piece::None, Piece::Rook};
+            movelist[num_moves + 2] = Move{Move::Type::Promo, Piece::Pawn, to - 8, to, Piece::None, Piece::Bishop};
+            movelist[num_moves + 3] = Move{Move::Type::Promo, Piece::Pawn, to - 8, to, Piece::None, Piece::Knight};
             num_moves += 4;
         } else {
-            movelist[num_moves] = Move(Move::Type::Quiet, Piece::Pawn, to - 8, to);
+            movelist[num_moves] = Move{Move::Type::Quiet, Piece::Pawn, to - 8, to, Piece::None, Piece::None};
             num_moves++;
         }
     }
@@ -74,7 +70,7 @@ int movegen(const Position &pos, Move *movelist) {
         auto fr = lsbll(copy);
         copy &= copy - 1;
 
-        movelist[num_moves] = Move(Move::Type::Double, Piece::Pawn, fr, fr + 16);
+        movelist[num_moves] = Move{Move::Type::Double, Piece::Pawn, fr, fr + 16, Piece::None, Piece::None};
         num_moves++;
     }
 
@@ -86,17 +82,17 @@ int movegen(const Position &pos, Move *movelist) {
 
         // Promotion
         if (to >= Square::a8) {
-            movelist[num_moves + 0] = Move(Move::Type::Promocapture, Piece::Pawn, to - 9, to, piece_on(pos, to));
-            movelist[num_moves + 0].promo = Piece::Queen;
-            movelist[num_moves + 1] = Move(Move::Type::Promocapture, Piece::Pawn, to - 9, to, piece_on(pos, to));
-            movelist[num_moves + 1].promo = Piece::Rook;
-            movelist[num_moves + 2] = Move(Move::Type::Promocapture, Piece::Pawn, to - 9, to, piece_on(pos, to));
-            movelist[num_moves + 2].promo = Piece::Bishop;
-            movelist[num_moves + 3] = Move(Move::Type::Promocapture, Piece::Pawn, to - 9, to, piece_on(pos, to));
-            movelist[num_moves + 3].promo = Piece::Knight;
+            movelist[num_moves + 0] =
+                Move{Move::Type::Promocapture, Piece::Pawn, to - 9, to, piece_on(pos, to), Piece::Queen};
+            movelist[num_moves + 1] =
+                Move{Move::Type::Promocapture, Piece::Pawn, to - 9, to, piece_on(pos, to), Piece::Rook};
+            movelist[num_moves + 2] =
+                Move{Move::Type::Promocapture, Piece::Pawn, to - 9, to, piece_on(pos, to), Piece::Bishop};
+            movelist[num_moves + 3] =
+                Move{Move::Type::Promocapture, Piece::Pawn, to - 9, to, piece_on(pos, to), Piece::Knight};
             num_moves += 4;
         } else {
-            movelist[num_moves] = Move(Move::Type::Capture, Piece::Pawn, to - 9, to, piece_on(pos, to));
+            movelist[num_moves] = Move{Move::Type::Capture, Piece::Pawn, to - 9, to, piece_on(pos, to), Piece::None};
             num_moves++;
         }
     }
@@ -109,17 +105,17 @@ int movegen(const Position &pos, Move *movelist) {
 
         // Promotion
         if (to >= Square::a8) {
-            movelist[num_moves + 0] = Move(Move::Type::Promocapture, Piece::Pawn, to - 7, to, piece_on(pos, to));
-            movelist[num_moves + 0].promo = Piece::Queen;
-            movelist[num_moves + 1] = Move(Move::Type::Promocapture, Piece::Pawn, to - 7, to, piece_on(pos, to));
-            movelist[num_moves + 1].promo = Piece::Rook;
-            movelist[num_moves + 2] = Move(Move::Type::Promocapture, Piece::Pawn, to - 7, to, piece_on(pos, to));
-            movelist[num_moves + 2].promo = Piece::Bishop;
-            movelist[num_moves + 3] = Move(Move::Type::Promocapture, Piece::Pawn, to - 7, to, piece_on(pos, to));
-            movelist[num_moves + 3].promo = Piece::Knight;
+            movelist[num_moves + 0] =
+                Move{Move::Type::Promocapture, Piece::Pawn, to - 7, to, piece_on(pos, to), Piece::Queen};
+            movelist[num_moves + 1] =
+                Move{Move::Type::Promocapture, Piece::Pawn, to - 7, to, piece_on(pos, to), Piece::Rook};
+            movelist[num_moves + 2] =
+                Move{Move::Type::Promocapture, Piece::Pawn, to - 7, to, piece_on(pos, to), Piece::Bishop};
+            movelist[num_moves + 3] =
+                Move{Move::Type::Promocapture, Piece::Pawn, to - 7, to, piece_on(pos, to), Piece::Knight};
             num_moves += 4;
         } else {
-            movelist[num_moves] = Move(Move::Type::Capture, Piece::Pawn, to - 7, to, piece_on(pos, to));
+            movelist[num_moves] = Move{Move::Type::Capture, Piece::Pawn, to - 7, to, piece_on(pos, to), Piece::None};
             num_moves++;
         }
     }
@@ -128,13 +124,21 @@ int movegen(const Position &pos, Move *movelist) {
     if (pos.ep != -1) {
         const auto bb = Bitboard(1ULL << (Square::a6 + pos.ep));
         if (bb & ne(pawns)) {
-            movelist[num_moves] =
-                Move(Move::Type::Enpassant, Piece::Pawn, Square::a6 + pos.ep - 9, Square::a6 + pos.ep);
+            movelist[num_moves] = Move{Move::Type::Enpassant,
+                                       Piece::Pawn,
+                                       Square::a6 + pos.ep - 9,
+                                       Square::a6 + pos.ep,
+                                       Piece::None,
+                                       Piece::None};
             num_moves++;
         }
         if (bb & nw(pawns)) {
-            movelist[num_moves] =
-                Move(Move::Type::Enpassant, Piece::Pawn, Square::a6 + pos.ep - 7, Square::a6 + pos.ep);
+            movelist[num_moves] = Move{Move::Type::Enpassant,
+                                       Piece::Pawn,
+                                       Square::a6 + pos.ep - 7,
+                                       Square::a6 + pos.ep,
+                                       Piece::None,
+                                       Piece::None};
             num_moves++;
         }
     }
@@ -151,12 +155,12 @@ int movegen(const Position &pos, Move *movelist) {
     // Castling
     if (pos.castling[0] && !(all & Bitboard(0x60ULL)) && !attacked(pos, Square::e1, true) &&
         !attacked(pos, Square::f1, true) && !attacked(pos, Square::g1, true)) {
-        movelist[num_moves] = Move(Move::Type::Ksc, Piece::King, Square::e1, Square::g1);
+        movelist[num_moves] = Move{Move::Type::Ksc, Piece::King, Square::e1, Square::g1, Piece::None, Piece::None};
         num_moves++;
     }
     if (pos.castling[1] && !(all & Bitboard(0xEULL)) && !attacked(pos, Square::e1, true) &&
         !attacked(pos, Square::d1, true) && !attacked(pos, Square::c1, true)) {
-        movelist[num_moves] = Move(Move::Type::Qsc, Piece::King, Square::e1, Square::c1);
+        movelist[num_moves] = Move{Move::Type::Qsc, Piece::King, Square::e1, Square::c1, Piece::None, Piece::None};
         num_moves++;
     }
 

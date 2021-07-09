@@ -19,15 +19,6 @@ struct Move {
         Promocapture,
     };
 
-    Move() : type{}, piece{}, from{}, to{}, captured{}, promo{} {
-    }
-
-    Move(Type ty, Piece p, int fr, int t) : type{ty}, piece{p}, from{fr}, to{t}, captured{}, promo{} {
-    }
-
-    Move(Type ty, Piece p, int fr, int t, Piece cap) : type{ty}, piece{p}, from{fr}, to{t}, captured{cap}, promo{} {
-    }
-
     Type type;
     Piece piece;
     int from;

@@ -13,7 +13,7 @@ sh build-linux.sh
 ---
 
 ## Executable Size
-Varies from system to system, but for me it's currently at **3,722 bytes**.
+Varies from system to system, but for me it's currently at **3,618 bytes**.
 
 ---
 
