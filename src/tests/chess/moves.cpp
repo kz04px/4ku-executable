@@ -9,59 +9,67 @@
 #include <chess/square.hpp>
 #include <string>
 
-void valid(const chess::Position &pos, const chess::Move &move) {
-    const auto piece = chess::piece_on(pos, move.from);
-    const auto captured = chess::piece_on(pos, move.to);
-
-    REQUIRE(piece == move.piece);
+void valid(const chess::Move &move) {
     REQUIRE(move.to != move.from);
+    REQUIRE(move.piece != chess::Piece::None);
+    REQUIRE(move.promo != chess::Piece::Pawn);
+    REQUIRE(move.promo != chess::Piece::King);
+    REQUIRE(move.captured != chess::Piece::King);
 
     switch (move.type) {
         case chess::Move::Type::Quiet:
-            REQUIRE(captured == chess::Piece::None);
+            REQUIRE(move.promo == chess::Piece::None);
+            REQUIRE(move.captured == chess::Piece::None);
             break;
         case chess::Move::Type::Double:
             REQUIRE((Square::a4 <= move.to && move.to <= Square::h4));
             REQUIRE((Square::a2 <= move.from && move.from <= Square::h2));
             REQUIRE(move.to - move.from == 16);
             REQUIRE(move.piece == chess::Piece::Pawn);
+            REQUIRE(move.promo == chess::Piece::None);
+            REQUIRE(move.captured == chess::Piece::None);
             break;
         case chess::Move::Type::Capture:
-            REQUIRE(captured == move.captured);
-            REQUIRE(captured != chess::Piece::King);
+            REQUIRE(move.promo == chess::Piece::None);
+            REQUIRE(move.captured != chess::Piece::None);
             break;
         case chess::Move::Type::Enpassant:
             REQUIRE((Square::a6 <= move.to && move.to <= Square::h6));
             REQUIRE((Square::a5 <= move.from && move.from <= Square::h5));
             REQUIRE(((move.to - move.from == 7) || (move.to - move.from == 9)));
+            REQUIRE(move.piece == chess::Piece::Pawn);
+            REQUIRE(move.promo == chess::Piece::None);
+            REQUIRE(move.captured == chess::Piece::Pawn);
             break;
         case chess::Move::Type::Ksc:
-            REQUIRE(move.piece == chess::Piece::King);
             REQUIRE(move.from == Square::e1);
             REQUIRE(move.to == Square::g1);
+            REQUIRE(move.piece == chess::Piece::King);
+            REQUIRE(move.promo == chess::Piece::None);
+            REQUIRE(move.captured == chess::Piece::None);
             break;
         case chess::Move::Type::Qsc:
-            REQUIRE(move.piece == chess::Piece::King);
             REQUIRE(move.from == Square::e1);
             REQUIRE(move.to == Square::c1);
+            REQUIRE(move.piece == chess::Piece::King);
+            REQUIRE(move.promo == chess::Piece::None);
+            REQUIRE(move.captured == chess::Piece::None);
             break;
         case chess::Move::Type::Promo:
             REQUIRE((Square::a8 <= move.to && move.to <= Square::h8));
             REQUIRE((Square::a7 <= move.from && move.from <= Square::h7));
             REQUIRE(move.to - move.from == 8);
             REQUIRE(move.piece == chess::Piece::Pawn);
-            REQUIRE(move.promo != chess::Piece::Pawn);
-            REQUIRE(move.promo != chess::Piece::King);
+            REQUIRE(move.promo != chess::Piece::None);
+            REQUIRE(move.captured == chess::Piece::None);
             break;
         case chess::Move::Type::Promocapture:
             REQUIRE((Square::a8 <= move.to && move.to <= Square::h8));
             REQUIRE((Square::a7 <= move.from && move.from <= Square::h7));
             REQUIRE(((move.to - move.from == 7) || (move.to - move.from == 9)));
             REQUIRE(move.piece == chess::Piece::Pawn);
-            REQUIRE(move.promo != chess::Piece::Pawn);
-            REQUIRE(move.promo != chess::Piece::King);
-            REQUIRE(captured == move.captured);
-            REQUIRE(captured != chess::Piece::King);
+            REQUIRE(move.promo != chess::Piece::None);
+            REQUIRE(move.captured != chess::Piece::None);
             break;
         default:
             FAIL();
@@ -80,7 +88,7 @@ void test(chess::Position &pos, const int depth) {
     for (int i = 0; i < num_moves; ++i) {
         auto npos = pos;
 
-        valid(npos, moves[i]);
+        valid(moves[i]);
 
         chess::makemove(npos, moves[i]);
 

@@ -128,7 +128,7 @@ int movegen(const Position &pos, Move *movelist) {
                                        Piece::Pawn,
                                        Square::a6 + pos.ep - 9,
                                        Square::a6 + pos.ep,
-                                       Piece::None,
+                                       Piece::Pawn,
                                        Piece::None};
             num_moves++;
         }
@@ -137,7 +137,7 @@ int movegen(const Position &pos, Move *movelist) {
                                        Piece::Pawn,
                                        Square::a6 + pos.ep - 7,
                                        Square::a6 + pos.ep,
-                                       Piece::None,
+                                       Piece::Pawn,
                                        Piece::None};
             num_moves++;
         }
