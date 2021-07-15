@@ -1,15 +1,16 @@
 #ifndef SEARCH_HPP
 #define SEARCH_HPP
 
-#include <chess/move.hpp>
+#define MATE_SCORE 10'000'000
 
 namespace chess {
 class Position;
+class Move;
 }  // namespace chess
 
 namespace search {
 
-[[nodiscard]] chess::Move dumb(const chess::Position &pos);
+int negamax(const chess::Position &pos, int depth, chess::Move &pv, const int stop_time);
 
 }  // namespace search
 

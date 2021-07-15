@@ -25,11 +25,23 @@ const int material[] = {100, 300, 325, 500, 900};
     return score;
 }
 
-[[nodiscard]] chess::Move dumb(const chess::Position &pos) {
+int negamax(const chess::Position &pos, int depth, chess::Move &pv, const int stop_time) {
+    const int ksq = chess::lsbll(pos.colour[0] & pos.pieces[static_cast<int>(chess::Piece::King)]);
+    const auto in_check = chess::attacked(pos, ksq, true);
+
+    if (depth == 0) {
+        return eval(pos);
+    }
+
+    // Did we run out of time?
+    if (clock() >= stop_time) {
+        return 0;
+    }
+
     chess::Move moves[256];
     const int num_moves = chess::movegen(pos, moves);
-    int best_score = -9999999;
-    int best_move_idx = 0;
+    int best_score = INT32_MIN;
+    int best_move_idx = -1;
 
     for (int i = 0; i < num_moves; ++i) {
         auto npos = pos;
@@ -39,7 +51,7 @@ const int material[] = {100, 300, 325, 500, 900};
             continue;
         }
 
-        const auto score = -eval(npos);
+        const auto score = -negamax(npos, depth - 1, pv, stop_time);
 
         if (score > best_score) {
             best_score = score;
@@ -47,7 +59,21 @@ const int material[] = {100, 300, 325, 500, 900};
         }
     }
 
-    return moves[best_move_idx];
+    // No legal moves
+    if (best_move_idx == -1) {
+        // Checkmate
+        if (in_check) {
+            return -MATE_SCORE;
+        }
+        // Stalemate
+        else {
+            return 0;
+        }
+    }
+
+    pv = moves[best_move_idx];
+
+    return best_score;
 }
 
 }  // namespace search
