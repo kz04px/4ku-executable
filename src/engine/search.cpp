@@ -25,7 +25,7 @@ const int material[] = {100, 300, 325, 500, 900};
     return score;
 }
 
-int negamax(const chess::Position &pos, int alpha, const int beta, int depth, chess::Move &pv, const int stop_time) {
+int alphabeta(const chess::Position &pos, int alpha, const int beta, int depth, chess::Move &pv, const int stop_time) {
     const int ksq = chess::lsbll(pos.colour[0] & pos.pieces[static_cast<int>(chess::Piece::King)]);
     const auto in_check = chess::attacked(pos, ksq, true);
 
@@ -51,7 +51,7 @@ int negamax(const chess::Position &pos, int alpha, const int beta, int depth, ch
             continue;
         }
 
-        const auto score = -negamax(npos, -beta, -alpha, depth - 1, pv, stop_time);
+        const auto score = -alphabeta(npos, -beta, -alpha, depth - 1, pv, stop_time);
 
         if (score > best_score) {
             best_score = score;

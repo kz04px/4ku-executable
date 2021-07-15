@@ -11,7 +11,7 @@ class Move;
 
 namespace search {
 
-int negamax(const chess::Position &pos, int alpha, const int beta, int depth, chess::Move &pv, const int stop_time);
+int alphabeta(const chess::Position &pos, int alpha, const int beta, int depth, chess::Move &pv, const int stop_time);
 
 }  // namespace search
 
