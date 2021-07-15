@@ -23,21 +23,12 @@ struct Position {
 
 static Piece piece_on(const Position &pos, const int sq) noexcept {
     const auto bb = Bitboard(1ULL << sq);
-    if (pos.pieces[0] & bb) {
-        return Piece::Pawn;
-    } else if (pos.pieces[1] & bb) {
-        return Piece::Knight;
-    } else if (pos.pieces[2] & bb) {
-        return Piece::Bishop;
-    } else if (pos.pieces[3] & bb) {
-        return Piece::Rook;
-    } else if (pos.pieces[4] & bb) {
-        return Piece::Queen;
-    } else if (pos.pieces[5] & bb) {
-        return Piece::King;
-    } else {
-        return Piece::None;
+    for (int i = 0; i < 6; ++i) {
+        if (pos.pieces[i] & bb) {
+            return static_cast<Piece>(i);
+        }
     }
+    return Piece::None;
 }
 
 static int colour_on(const Position &pos, const int sq) {
@@ -90,12 +81,11 @@ static int colour_on(const Position &pos, const int sq) {
 [[maybe_unused]] static void flip(Position &pos) noexcept {
     pos.colour[0] = flip(pos.colour[0]);
     pos.colour[1] = flip(pos.colour[1]);
-    pos.pieces[0] = flip(pos.pieces[0]);
-    pos.pieces[1] = flip(pos.pieces[1]);
-    pos.pieces[2] = flip(pos.pieces[2]);
-    pos.pieces[3] = flip(pos.pieces[3]);
-    pos.pieces[4] = flip(pos.pieces[4]);
-    pos.pieces[5] = flip(pos.pieces[5]);
+
+    for (int i = 0; i < 6; ++i) {
+        pos.pieces[i] = flip(pos.pieces[i]);
+    }
+
     {
         const auto c = pos.colour[0];
         pos.colour[0] = pos.colour[1];
