@@ -13,7 +13,7 @@ void go(chess::Position &pos, const int time) {
 
     for (int i = 1; i < 128; ++i) {
         chess::Move bestmove;
-        search::negamax(pos, i, bestmove, stop_time);
+        search::negamax(pos, -INF, INF, i, bestmove, stop_time);
 
         // Did we run out of time?
         if (clock() >= stop_time) {
