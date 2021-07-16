@@ -30,12 +30,7 @@ void generate_piece_moves(Move *movelist,
             auto to = lsbll(moves);
             moves &= moves - 1;
 
-            const auto captured = piece_on(pos, to);
-            if (captured != Piece::None) {
-                add_move(movelist, num_moves, fr, to, Piece::None);
-            } else {
-                add_move(movelist, num_moves, fr, to, Piece::None);
-            }
+            add_move(movelist, num_moves, fr, to, Piece::None);
         }
     }
 }
