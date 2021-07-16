@@ -72,11 +72,13 @@ int movegen(const Position &pos, Move *movelist) {
     generate_piece_moves(movelist, num_moves, pos, Piece::Queen, raycast::rook);
     generate_piece_moves(movelist, num_moves, pos, Piece::King, raycast::king);
 
-    // Castling
+    // Castling - King side
     if (pos.castling[0] && !(all & Bitboard(0x60ULL)) && !attacked(pos, Square::e1, true) &&
         !attacked(pos, Square::f1, true) && !attacked(pos, Square::g1, true)) {
         add_move(movelist, num_moves, Square::e1, Square::g1, Piece::None);
     }
+
+    // Castling - Queen side
     if (pos.castling[1] && !(all & Bitboard(0xEULL)) && !attacked(pos, Square::e1, true) &&
         !attacked(pos, Square::d1, true) && !attacked(pos, Square::c1, true)) {
         add_move(movelist, num_moves, Square::e1, Square::c1, Piece::None);
