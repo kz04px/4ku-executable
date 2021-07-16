@@ -6,7 +6,7 @@ namespace chess {
 struct Position;
 struct Move;
 
-void makemove(Position &pos, const Move &move);
+bool makemove(Position &pos, const Move &move);
 
 }  // namespace chess
 

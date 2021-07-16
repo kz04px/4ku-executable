@@ -33,11 +33,8 @@ void test(chess::Position &pos, const int depth) {
 
         valid(moves[i]);
 
-        chess::makemove(npos, moves[i]);
-
-        const int ksq = chess::lsbll(npos.colour[1] & npos.pieces[static_cast<int>(chess::Piece::King)]);
-
-        if (chess::attacked(npos, ksq, false)) {
+        // Check move legality
+        if (!chess::makemove(npos, moves[i])) {
             continue;
         }
 

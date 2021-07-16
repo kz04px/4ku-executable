@@ -15,11 +15,8 @@ namespace search {
     for (int i = 0; i < num_moves; ++i) {
         auto npos = pos;
 
-        chess::makemove(npos, moves[i]);
-
-        const int ksq = chess::lsbll(npos.colour[1] & npos.pieces[static_cast<int>(chess::Piece::King)]);
-
-        if (chess::attacked(npos, ksq, false)) {
+        // Check move legality
+        if (!chess::makemove(npos, moves[i])) {
             continue;
         }
 

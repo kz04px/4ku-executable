@@ -19,11 +19,8 @@ std::uint64_t perft(const Position &pos, const int depth) {
     for (int i = 0; i < num_moves; ++i) {
         auto npos = pos;
 
-        makemove(npos, moves[i]);
-
-        const int ksq = lsbll(npos.colour[1] & npos.pieces[static_cast<int>(chess::Piece::King)]);
-
-        if (chess::attacked(npos, ksq, false)) {
+        // Check move legality
+        if (!chess::makemove(npos, moves[i])) {
             continue;
         }
 

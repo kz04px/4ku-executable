@@ -1,4 +1,5 @@
 #include "makemove.hpp"
+#include "attack.hpp"
 #include "move.hpp"
 #include "piece.hpp"
 #include "position.hpp"
@@ -6,7 +7,7 @@
 
 namespace chess {
 
-void makemove(Position &pos, const Move &move) {
+bool makemove(Position &pos, const Move &move) {
     const auto piece = piece_on(pos, move.from);
     const auto captured = piece_on(pos, move.to);
 
@@ -63,6 +64,10 @@ void makemove(Position &pos, const Move &move) {
 
     // Flip the board
     flip(pos);
+
+    // Did this move hang our king?
+    const int ksq = lsbll(pos.colour[1] & pos.pieces[static_cast<int>(chess::Piece::King)]);
+    return !attacked(pos, ksq, false);
 }
 
 }  // namespace chess
