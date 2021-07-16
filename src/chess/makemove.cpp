@@ -14,18 +14,18 @@ void makemove(Position &pos, const Move &move) {
     pos.colour[0] ^= Bitboard(1ULL << move.from) | Bitboard(1ULL << move.to);
     pos.pieces[static_cast<int>(piece)] ^= Bitboard(1ULL << move.from) | Bitboard(1ULL << move.to);
 
-    pos.ep = -1;
-
-    // Double
-    if (piece == Piece::Pawn && move.to - move.from == 16) {
-        pos.ep = move.to % 8;
-    }
-
     // En passant
-    if (piece == Piece::Pawn && captured == Piece::None && move.to % 8 != move.from % 8) {
+    if (piece == Piece::Pawn && Bitboard(1ULL << move.to) == pos.ep) {
         // Remove their pawn
         pos.colour[1] ^= Bitboard(1ULL << (move.to - 8));
         pos.pieces[static_cast<int>(Piece::Pawn)] ^= Bitboard(1ULL << (move.to - 8));
+    }
+
+    pos.ep = 0x0ULL;
+
+    // Double
+    if (piece == Piece::Pawn && move.to - move.from == 16) {
+        pos.ep = Bitboard(1ULL << (move.from + 8));
     }
 
     // Remove their piece

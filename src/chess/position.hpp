@@ -15,8 +15,8 @@ struct Position {
                           0x8100000000000081ULL,
                           0x800000000000008ULL,
                           0x1000000000000010ULL};
+    Bitboard ep = 0x0ULL;
     int halfmoves = 0;
-    int ep = -1;
     bool castling[4] = {true, true, true, true};
     bool flipped = false;
 };
@@ -85,6 +85,8 @@ static int colour_on(const Position &pos, const int sq) {
     for (int i = 0; i < 6; ++i) {
         pos.pieces[i] = flip(pos.pieces[i]);
     }
+
+    pos.ep = flip(pos.ep);
 
     {
         const auto c = pos.colour[0];

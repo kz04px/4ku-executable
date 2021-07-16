@@ -135,7 +135,8 @@ void set_fen(Position &pos, const std::string &fen) {
     // En passant
     ss >> word;
     if (word != "-") {
-        pos.ep = word[0] - 'a';
+        const int sq = word[0] - 'a' + 8 * (word[1] - '1');
+        pos.ep = 1ULL << sq;
     }
 
     // Halfmove clock
@@ -269,16 +270,18 @@ std::string get_fen(const Position &pos) {
     }
 
     // Part 4 -- En passant square
-    if (pos.ep == -1) {
-        fen += " -";
-    } else {
+    if (pos.ep) {
+        const auto sq = lsbll(pos.ep);
+
         fen += " ";
-        fen += static_cast<char>('a' + pos.ep);
+        fen += static_cast<char>('a' + sq % 8);
         if (pos.flipped) {
             fen += '3';
         } else {
             fen += '6';
         }
+    } else {
+        fen += " -";
     }
 
     // Part 5 -- Halfmove clock

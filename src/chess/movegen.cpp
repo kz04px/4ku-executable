@@ -68,7 +68,7 @@ int movegen(const Position &pos, Move *movelist) {
     }
 
     // Pawns -- Captures
-    copy = ne(pawns) & pos.colour[1];
+    copy = ne(pawns) & (pos.colour[1] | pos.ep);
     while (copy) {
         auto to = lsbll(copy);
         copy &= copy - 1;
@@ -85,7 +85,7 @@ int movegen(const Position &pos, Move *movelist) {
     }
 
     // Pawns -- Captures
-    copy = nw(pawns) & pos.colour[1];
+    copy = nw(pawns) & (pos.colour[1] | pos.ep);
     while (copy) {
         auto to = lsbll(copy);
         copy &= copy - 1;
@@ -98,17 +98,6 @@ int movegen(const Position &pos, Move *movelist) {
             add_move(movelist, num_moves, to - 7, to, Piece::Knight);
         } else {
             add_move(movelist, num_moves, to - 7, to, Piece::None);
-        }
-    }
-
-    // En passant
-    if (pos.ep != -1) {
-        const auto bb = Bitboard(1ULL << (Square::a6 + pos.ep));
-        if (bb & ne(pawns)) {
-            add_move(movelist, num_moves, Square::a6 + pos.ep - 9, Square::a6 + pos.ep, Piece::None);
-        }
-        if (bb & nw(pawns)) {
-            add_move(movelist, num_moves, Square::a6 + pos.ep - 7, Square::a6 + pos.ep, Piece::None);
         }
     }
 
