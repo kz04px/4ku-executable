@@ -8,15 +8,8 @@
 
 namespace chess {
 
-void add_move(chess::Move *movelist,
-              int &num_moves,
-              const Move::Type type,
-              const chess::Piece piece,
-              const int from,
-              const int to,
-              const chess::Piece captured,
-              const chess::Piece promo) {
-    movelist[num_moves] = Move{type, piece, from, to, captured, promo};
+void add_move(chess::Move *movelist, int &num_moves, const int from, const int to, const chess::Piece promo) {
+    movelist[num_moves] = Move{from, to, promo};
     num_moves++;
 }
 
@@ -39,9 +32,9 @@ void generate_piece_moves(Move *movelist,
 
             const auto captured = piece_on(pos, to);
             if (captured != Piece::None) {
-                add_move(movelist, num_moves, Move::Type::Capture, piece, fr, to, captured, Piece::None);
+                add_move(movelist, num_moves, fr, to, Piece::None);
             } else {
-                add_move(movelist, num_moves, Move::Type::Quiet, piece, fr, to, Piece::None, Piece::None);
+                add_move(movelist, num_moves, fr, to, Piece::None);
             }
         }
     }
@@ -61,12 +54,12 @@ int movegen(const Position &pos, Move *movelist) {
 
         // Promotion
         if (to >= Square::a8) {
-            add_move(movelist, num_moves, Move::Type::Promo, Piece::Pawn, to - 8, to, Piece::None, Piece::Queen);
-            add_move(movelist, num_moves, Move::Type::Promo, Piece::Pawn, to - 8, to, Piece::None, Piece::Rook);
-            add_move(movelist, num_moves, Move::Type::Promo, Piece::Pawn, to - 8, to, Piece::None, Piece::Bishop);
-            add_move(movelist, num_moves, Move::Type::Promo, Piece::Pawn, to - 8, to, Piece::None, Piece::Knight);
+            add_move(movelist, num_moves, to - 8, to, Piece::Queen);
+            add_move(movelist, num_moves, to - 8, to, Piece::Rook);
+            add_move(movelist, num_moves, to - 8, to, Piece::Bishop);
+            add_move(movelist, num_moves, to - 8, to, Piece::Knight);
         } else {
-            add_move(movelist, num_moves, Move::Type::Quiet, Piece::Pawn, to - 8, to, Piece::None, Piece::None);
+            add_move(movelist, num_moves, to - 8, to, Piece::None);
         }
     }
 
@@ -76,7 +69,7 @@ int movegen(const Position &pos, Move *movelist) {
         auto fr = lsbll(copy);
         copy &= copy - 1;
 
-        add_move(movelist, num_moves, Move::Type::Double, Piece::Pawn, fr, fr + 16, Piece::None, Piece::None);
+        add_move(movelist, num_moves, fr, fr + 16, Piece::None);
     }
 
     // Pawns -- Captures
@@ -87,34 +80,12 @@ int movegen(const Position &pos, Move *movelist) {
 
         // Promotion
         if (to >= Square::a8) {
-            add_move(movelist,
-                     num_moves,
-                     Move::Type::Promocapture,
-                     Piece::Pawn,
-                     to - 9,
-                     to,
-                     piece_on(pos, to),
-                     Piece::Queen);
-            add_move(
-                movelist, num_moves, Move::Type::Promocapture, Piece::Pawn, to - 9, to, piece_on(pos, to), Piece::Rook);
-            add_move(movelist,
-                     num_moves,
-                     Move::Type::Promocapture,
-                     Piece::Pawn,
-                     to - 9,
-                     to,
-                     piece_on(pos, to),
-                     Piece::Bishop);
-            add_move(movelist,
-                     num_moves,
-                     Move::Type::Promocapture,
-                     Piece::Pawn,
-                     to - 9,
-                     to,
-                     piece_on(pos, to),
-                     Piece::Knight);
+            add_move(movelist, num_moves, to - 9, to, Piece::Queen);
+            add_move(movelist, num_moves, to - 9, to, Piece::Rook);
+            add_move(movelist, num_moves, to - 9, to, Piece::Bishop);
+            add_move(movelist, num_moves, to - 9, to, Piece::Knight);
         } else {
-            add_move(movelist, num_moves, Move::Type::Capture, Piece::Pawn, to - 9, to, piece_on(pos, to), Piece::None);
+            add_move(movelist, num_moves, to - 9, to, Piece::None);
         }
     }
 
@@ -126,34 +97,12 @@ int movegen(const Position &pos, Move *movelist) {
 
         // Promotion
         if (to >= Square::a8) {
-            add_move(movelist,
-                     num_moves,
-                     Move::Type::Promocapture,
-                     Piece::Pawn,
-                     to - 7,
-                     to,
-                     piece_on(pos, to),
-                     Piece::Queen);
-            add_move(
-                movelist, num_moves, Move::Type::Promocapture, Piece::Pawn, to - 7, to, piece_on(pos, to), Piece::Rook);
-            add_move(movelist,
-                     num_moves,
-                     Move::Type::Promocapture,
-                     Piece::Pawn,
-                     to - 7,
-                     to,
-                     piece_on(pos, to),
-                     Piece::Bishop);
-            add_move(movelist,
-                     num_moves,
-                     Move::Type::Promocapture,
-                     Piece::Pawn,
-                     to - 7,
-                     to,
-                     piece_on(pos, to),
-                     Piece::Knight);
+            add_move(movelist, num_moves, to - 7, to, Piece::Queen);
+            add_move(movelist, num_moves, to - 7, to, Piece::Rook);
+            add_move(movelist, num_moves, to - 7, to, Piece::Bishop);
+            add_move(movelist, num_moves, to - 7, to, Piece::Knight);
         } else {
-            add_move(movelist, num_moves, Move::Type::Capture, Piece::Pawn, to - 7, to, piece_on(pos, to), Piece::None);
+            add_move(movelist, num_moves, to - 7, to, Piece::None);
         }
     }
 
@@ -161,24 +110,10 @@ int movegen(const Position &pos, Move *movelist) {
     if (pos.ep != -1) {
         const auto bb = Bitboard(1ULL << (Square::a6 + pos.ep));
         if (bb & ne(pawns)) {
-            add_move(movelist,
-                     num_moves,
-                     Move::Type::Enpassant,
-                     Piece::Pawn,
-                     Square::a6 + pos.ep - 9,
-                     Square::a6 + pos.ep,
-                     Piece::Pawn,
-                     Piece::None);
+            add_move(movelist, num_moves, Square::a6 + pos.ep - 9, Square::a6 + pos.ep, Piece::None);
         }
         if (bb & nw(pawns)) {
-            add_move(movelist,
-                     num_moves,
-                     Move::Type::Enpassant,
-                     Piece::Pawn,
-                     Square::a6 + pos.ep - 7,
-                     Square::a6 + pos.ep,
-                     Piece::Pawn,
-                     Piece::None);
+            add_move(movelist, num_moves, Square::a6 + pos.ep - 7, Square::a6 + pos.ep, Piece::None);
         }
     }
 
@@ -194,11 +129,11 @@ int movegen(const Position &pos, Move *movelist) {
     // Castling
     if (pos.castling[0] && !(all & Bitboard(0x60ULL)) && !attacked(pos, Square::e1, true) &&
         !attacked(pos, Square::f1, true) && !attacked(pos, Square::g1, true)) {
-        add_move(movelist, num_moves, Move::Type::Ksc, Piece::King, Square::e1, Square::g1, Piece::None, Piece::None);
+        add_move(movelist, num_moves, Square::e1, Square::g1, Piece::None);
     }
     if (pos.castling[1] && !(all & Bitboard(0xEULL)) && !attacked(pos, Square::e1, true) &&
         !attacked(pos, Square::d1, true) && !attacked(pos, Square::c1, true)) {
-        add_move(movelist, num_moves, Move::Type::Qsc, Piece::King, Square::e1, Square::c1, Piece::None, Piece::None);
+        add_move(movelist, num_moves, Square::e1, Square::c1, Piece::None);
     }
 
     return num_moves;

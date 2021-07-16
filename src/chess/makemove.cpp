@@ -7,53 +7,52 @@
 namespace chess {
 
 void makemove(Position &pos, const Move &move) {
+    const auto piece = piece_on(pos, move.from);
+    const auto captured = piece_on(pos, move.to);
+
     // Move our piece
     pos.colour[0] ^= Bitboard(1ULL << move.from) | Bitboard(1ULL << move.to);
-    pos.pieces[static_cast<int>(move.piece)] ^= Bitboard(1ULL << move.from) | Bitboard(1ULL << move.to);
+    pos.pieces[static_cast<int>(piece)] ^= Bitboard(1ULL << move.from) | Bitboard(1ULL << move.to);
 
     pos.ep = -1;
 
-    switch (move.type) {
-        case Move::Type::Quiet:
-            break;
-        case Move::Type::Double:
-            pos.ep = move.to % 8;
-            break;
-        case Move::Type::Capture:
-            // Remove their piece
-            pos.colour[1] ^= Bitboard(1ULL << move.to);
-            pos.pieces[static_cast<int>(move.captured)] ^= Bitboard(1ULL << move.to);
-            break;
-        case Move::Type::Enpassant:
-            // Remove their pawn
-            pos.colour[1] ^= Bitboard(1ULL << (move.to - 8));
-            pos.pieces[static_cast<int>(Piece::Pawn)] ^= Bitboard(1ULL << (move.to - 8));
-            break;
-        case Move::Type::Ksc:
-            // Move the rook
-            pos.colour[0] ^= Bitboard((1ULL << Square::h1) | (1ULL << Square::f1));
-            pos.pieces[static_cast<int>(Piece::Rook)] ^= Bitboard((1ULL << Square::h1) | (1ULL << Square::f1));
-            break;
-        case Move::Type::Qsc:
-            // Move the rook
-            pos.colour[0] ^= Bitboard((1ULL << Square::a1) | (1ULL << Square::d1));
-            pos.pieces[static_cast<int>(Piece::Rook)] ^= Bitboard((1ULL << Square::a1) | (1ULL << Square::d1));
-            break;
-        case Move::Type::Promo:
-            // Replace pawn with new piece
-            pos.pieces[static_cast<int>(Piece::Pawn)] ^= Bitboard(1ULL << move.to);
-            pos.pieces[static_cast<int>(move.promo)] ^= Bitboard(1ULL << move.to);
-            break;
-        case Move::Type::Promocapture:
-            // Replace pawn with new piece
-            pos.pieces[static_cast<int>(Piece::Pawn)] ^= Bitboard(1ULL << move.to);
-            pos.pieces[static_cast<int>(move.promo)] ^= Bitboard(1ULL << move.to);
-            // Remove their piece
-            pos.colour[1] ^= Bitboard(1ULL << move.to);
-            pos.pieces[static_cast<int>(move.captured)] ^= Bitboard(1ULL << move.to);
-            break;
-        default:
-            break;
+    // Double
+    if (piece == Piece::Pawn && move.to - move.from == 16) {
+        pos.ep = move.to % 8;
+    }
+
+    // En passant
+    if (piece == Piece::Pawn && captured == Piece::None && move.to % 8 != move.from % 8) {
+        // Remove their pawn
+        pos.colour[1] ^= Bitboard(1ULL << (move.to - 8));
+        pos.pieces[static_cast<int>(Piece::Pawn)] ^= Bitboard(1ULL << (move.to - 8));
+    }
+
+    // Remove their piece
+    if (captured != Piece::None) {
+        pos.colour[1] ^= Bitboard(1ULL << move.to);
+        pos.pieces[static_cast<int>(captured)] ^= Bitboard(1ULL << move.to);
+    }
+
+    // King side castle
+    if (piece == Piece::King && move.to - move.from == 2) {
+        // Move the rook
+        pos.colour[0] ^= Bitboard((1ULL << Square::h1) | (1ULL << Square::f1));
+        pos.pieces[static_cast<int>(Piece::Rook)] ^= Bitboard((1ULL << Square::h1) | (1ULL << Square::f1));
+    }
+
+    // Queen side castle
+    if (piece == Piece::King && move.to - move.from == -2) {
+        // Move the rook
+        pos.colour[0] ^= Bitboard((1ULL << Square::a1) | (1ULL << Square::d1));
+        pos.pieces[static_cast<int>(Piece::Rook)] ^= Bitboard((1ULL << Square::a1) | (1ULL << Square::d1));
+    }
+
+    // Promo
+    if (piece == Piece::Pawn && move.to >= Square::a8) {
+        // Replace pawn with new piece
+        pos.pieces[static_cast<int>(Piece::Pawn)] ^= Bitboard(1ULL << move.to);
+        pos.pieces[static_cast<int>(move.promo)] ^= Bitboard(1ULL << move.to);
     }
 
     // Remove castling permissions

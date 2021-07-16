@@ -7,23 +7,8 @@
 namespace chess {
 
 struct Move {
-    enum class Type : std::uint8_t
-    {
-        Quiet = 0,
-        Double,
-        Capture,
-        Enpassant,
-        Ksc,
-        Qsc,
-        Promo,
-        Promocapture,
-    };
-
-    Type type;
-    Piece piece;
     int from;
     int to;
-    Piece captured;
     Piece promo;
 };
 
