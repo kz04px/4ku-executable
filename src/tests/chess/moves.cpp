@@ -6,13 +6,18 @@
 #include <chess/move.hpp>
 #include <chess/movegen.hpp>
 #include <chess/position.hpp>
+#include <chess/raycast.hpp>
 #include <chess/square.hpp>
 #include <string>
 
 void valid(const chess::Move &move) {
+    const auto supermove = chess::raycast::knight(move.from, 0x0ULL) | chess::raycast::bishop(move.from, 0x0ULL) |
+                           chess::raycast::rook(move.from, 0x0ULL);
     REQUIRE(move.to != move.from);
+    REQUIRE(chess::Bitboard(1ULL << move.to) & supermove);
     REQUIRE(move.promo != chess::Piece::Pawn);
     REQUIRE(move.promo != chess::Piece::King);
+    REQUIRE((move.to >= chess::Square::a8 || move.promo == chess::Piece::None));
 }
 
 void test(chess::Position &pos, const int depth) {
