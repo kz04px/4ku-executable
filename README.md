@@ -27,6 +27,6 @@ The UCI protocol isn't strictly followed in the interests of space:
 ---
 
 ## Thanks
-- [Catch2](https://github.com/catchorg/Catch2) -- A modern, C++-native, header-only, test framework for unit-tests, TDD and BDD - using C++11, C++14, C++17 and later
-- Roman Hartmann's perft suite
-- Thanks to friends for help with compiler flags and xz scripts
+- [Catch2](https://github.com/catchorg/Catch2) -- A modern, C++-native, header-only, test framework for unit-tests, TDD and BDD - using C++11, C++14, C++17 and later.
+- Roman Hartmann's perft suite.
+- Thanks to friends for help with compiler flags, xz scripts, and code review.
