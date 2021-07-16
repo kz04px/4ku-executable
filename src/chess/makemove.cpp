@@ -35,18 +35,11 @@ bool makemove(Position &pos, const Move &move) {
         pos.pieces[static_cast<int>(captured)] ^= Bitboard(1ULL << move.to);
     }
 
-    // King side castle
-    if (piece == Piece::King && move.to - move.from == 2) {
-        // Move the rook
-        pos.colour[0] ^= Bitboard((1ULL << Square::h1) | (1ULL << Square::f1));
-        pos.pieces[static_cast<int>(Piece::Rook)] ^= Bitboard((1ULL << Square::h1) | (1ULL << Square::f1));
-    }
-
-    // Queen side castle
-    if (piece == Piece::King && move.to - move.from == -2) {
-        // Move the rook
-        pos.colour[0] ^= Bitboard((1ULL << Square::a1) | (1ULL << Square::d1));
-        pos.pieces[static_cast<int>(Piece::Rook)] ^= Bitboard((1ULL << Square::a1) | (1ULL << Square::d1));
+    // Castling
+    if (piece == Piece::King) {
+        const auto bb = move.to - move.from == 2 ? 0xa0ULL : move.to - move.from == -2 ? 0x9ULL : 0x0ULL;
+        pos.colour[0] ^= bb;
+        pos.pieces[static_cast<int>(Piece::Rook)] ^= bb;
     }
 
     // Promo
