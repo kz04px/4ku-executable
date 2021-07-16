@@ -1,6 +1,8 @@
 #ifndef SQUARE_HPP
 #define SQUARE_HPP
 
+namespace chess {
+
 // clang-format off
 enum Square
 {
@@ -14,5 +16,7 @@ enum Square
     a8, b8, c8, d8, e8, f8, g8, h8,
 };
 // clang-format on
+
+}  // namespace chess
 
 #endif
