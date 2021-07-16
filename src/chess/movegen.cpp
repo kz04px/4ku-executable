@@ -13,6 +13,23 @@ void add_move(chess::Move *movelist, int &num_moves, const int from, const int t
     num_moves++;
 }
 
+void generate_pawn_moves(Move *movelist, int &num_moves, Bitboard to_mask, const int offset) {
+    while (to_mask) {
+        auto to = lsbll(to_mask);
+        to_mask &= to_mask - 1;
+
+        // Promotion
+        if (to >= Square::a8) {
+            add_move(movelist, num_moves, to + offset, to, Piece::Queen);
+            add_move(movelist, num_moves, to + offset, to, Piece::Rook);
+            add_move(movelist, num_moves, to + offset, to, Piece::Bishop);
+            add_move(movelist, num_moves, to + offset, to, Piece::Knight);
+        } else {
+            add_move(movelist, num_moves, to + offset, to, Piece::None);
+        }
+    }
+}
+
 void generate_piece_moves(Move *movelist,
                           int &num_moves,
                           const Position &pos,
@@ -38,77 +55,22 @@ void generate_piece_moves(Move *movelist,
 int movegen(const Position &pos, Move *movelist) {
     int num_moves = 0;
 
-    const auto empty = ~(pos.colour[0] | pos.colour[1]);
+    const auto all = pos.colour[0] | pos.colour[1];
+    const auto empty = ~all;
     const auto pawns = pos.colour[0] & pos.pieces[static_cast<int>(Piece::Pawn)];
 
-    // Pawns -- Single
-    auto copy = north(pawns) & empty;
-    while (copy) {
-        auto to = lsbll(copy);
-        copy &= copy - 1;
-
-        // Promotion
-        if (to >= Square::a8) {
-            add_move(movelist, num_moves, to - 8, to, Piece::Queen);
-            add_move(movelist, num_moves, to - 8, to, Piece::Rook);
-            add_move(movelist, num_moves, to - 8, to, Piece::Bishop);
-            add_move(movelist, num_moves, to - 8, to, Piece::Knight);
-        } else {
-            add_move(movelist, num_moves, to - 8, to, Piece::None);
-        }
-    }
-
-    // Pawns -- Double
-    copy = south((south(empty) & empty)) & pawns & Bitboard(0xFF00ULL);
-    while (copy) {
-        auto fr = lsbll(copy);
-        copy &= copy - 1;
-
-        add_move(movelist, num_moves, fr, fr + 16, Piece::None);
-    }
-
-    // Pawns -- Captures
-    copy = ne(pawns) & (pos.colour[1] | pos.ep);
-    while (copy) {
-        auto to = lsbll(copy);
-        copy &= copy - 1;
-
-        // Promotion
-        if (to >= Square::a8) {
-            add_move(movelist, num_moves, to - 9, to, Piece::Queen);
-            add_move(movelist, num_moves, to - 9, to, Piece::Rook);
-            add_move(movelist, num_moves, to - 9, to, Piece::Bishop);
-            add_move(movelist, num_moves, to - 9, to, Piece::Knight);
-        } else {
-            add_move(movelist, num_moves, to - 9, to, Piece::None);
-        }
-    }
-
-    // Pawns -- Captures
-    copy = nw(pawns) & (pos.colour[1] | pos.ep);
-    while (copy) {
-        auto to = lsbll(copy);
-        copy &= copy - 1;
-
-        // Promotion
-        if (to >= Square::a8) {
-            add_move(movelist, num_moves, to - 7, to, Piece::Queen);
-            add_move(movelist, num_moves, to - 7, to, Piece::Rook);
-            add_move(movelist, num_moves, to - 7, to, Piece::Bishop);
-            add_move(movelist, num_moves, to - 7, to, Piece::Knight);
-        } else {
-            add_move(movelist, num_moves, to - 7, to, Piece::None);
-        }
-    }
-
+    // Pawns
+    generate_pawn_moves(movelist, num_moves, north(pawns) & empty, -8);
+    generate_pawn_moves(movelist, num_moves, north(north(pawns & Bitboard(0xFF00ULL)) & empty) & empty, -16);
+    generate_pawn_moves(movelist, num_moves, nw(pawns) & (pos.colour[1] | pos.ep), -7);
+    generate_pawn_moves(movelist, num_moves, ne(pawns) & (pos.colour[1] | pos.ep), -9);
+    // Others
     generate_piece_moves(movelist, num_moves, pos, Piece::Knight, raycast::knight);
     generate_piece_moves(movelist, num_moves, pos, Piece::Bishop, raycast::bishop);
     generate_piece_moves(movelist, num_moves, pos, Piece::Queen, raycast::bishop);
     generate_piece_moves(movelist, num_moves, pos, Piece::Rook, raycast::rook);
     generate_piece_moves(movelist, num_moves, pos, Piece::Queen, raycast::rook);
     generate_piece_moves(movelist, num_moves, pos, Piece::King, raycast::king);
-
-    const auto all = pos.colour[0] | pos.colour[1];
 
     // Castling
     if (pos.castling[0] && !(all & Bitboard(0x60ULL)) && !attacked(pos, Square::e1, true) &&
