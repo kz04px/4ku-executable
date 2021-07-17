@@ -12,6 +12,11 @@ struct Move {
     Piece promo;
 };
 
+inline bool operator ==(const Move& lhs, const Move& rhs)
+{
+    return lhs.from == rhs.from && lhs.to == rhs.to && lhs.promo == rhs.promo;
+}
+
 [[maybe_unused]] static void move_str(const Move &move, char *str, const bool flip) {
     static constexpr char promos[] = {'\0', 'n', 'b', 'r', 'q', '\0', '\0'};
 

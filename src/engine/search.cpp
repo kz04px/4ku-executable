@@ -25,7 +25,7 @@ const int material[] = {100, 300, 325, 500, 900};
     return score;
 }
 
-int alphabeta(const chess::Position &pos, int alpha, const int beta, int depth, chess::Move &pv, const int stop_time) {
+int alphabeta(const chess::Position &pos, int alpha, const int beta, int depth, int ply, const int stop_time, chess::Move pvline[]) {
     const int ksq = chess::lsbll(pos.colour[0] & pos.pieces[static_cast<int>(chess::Piece::King)]);
     const auto in_check = chess::attacked(pos, ksq, true);
 
@@ -44,6 +44,15 @@ int alphabeta(const chess::Position &pos, int alpha, const int beta, int depth, 
     int best_move_idx = -1;
 
     for (int i = 0; i < num_moves; ++i) {
+        if(moves[i] == pvline[ply]) {
+            moves[i] = moves[0];
+            moves[0] = pvline[ply];
+            break;
+        }
+    }
+
+    bool raisedAlpha = false;
+    for (int i = 0; i < num_moves; ++i) {
         auto npos = pos;
 
         // Check move legality
@@ -51,7 +60,7 @@ int alphabeta(const chess::Position &pos, int alpha, const int beta, int depth, 
             continue;
         }
 
-        const auto score = -alphabeta(npos, -beta, -alpha, depth - 1, pv, stop_time);
+        const auto score = -alphabeta(npos, -beta, -alpha, depth - 1, ply + 1, stop_time, pvline);
 
         if (score > best_score) {
             best_score = score;
@@ -59,6 +68,7 @@ int alphabeta(const chess::Position &pos, int alpha, const int beta, int depth, 
 
             if (score > alpha) {
                 alpha = score;
+                raisedAlpha = true;
             }
         }
 
@@ -79,8 +89,9 @@ int alphabeta(const chess::Position &pos, int alpha, const int beta, int depth, 
         }
     }
 
-    pv = moves[best_move_idx];
-
+    if(raisedAlpha) {
+        pvline[ply] = moves[best_move_idx];
+    }
     return best_score;
 }
 
