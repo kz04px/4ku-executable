@@ -29,9 +29,9 @@ int alphabeta(const chess::Position &pos,
               int alpha,
               const int beta,
               int depth,
-              int ply,
+              const int ply,
               const int stop_time,
-              chess::Move pvline[]) {
+              chess::Move *pvline) {
     const int ksq = chess::lsbll(pos.colour[0] & pos.pieces[static_cast<int>(chess::Piece::King)]);
     const auto in_check = chess::attacked(pos, ksq, true);
 
