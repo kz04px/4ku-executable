@@ -26,7 +26,9 @@ void test(chess::Position &pos, const int depth) {
     }
 
     chess::Move moves[256];
-    const int num_moves = chess::movegen(pos, moves);
+    int num_moves = 0;
+    chess::movegen(pos, moves, num_moves, true);
+    chess::movegen(pos, moves, num_moves, false);
 
     for (int i = 0; i < num_moves; ++i) {
         auto npos = pos;

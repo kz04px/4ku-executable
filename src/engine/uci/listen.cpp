@@ -65,7 +65,9 @@ void listen() {
         }
         // Try parse a move
         else {
-            const int num_moves = chess::movegen(pos, moves);
+            int num_moves = 0;
+            chess::movegen(pos, moves, num_moves, true);
+            chess::movegen(pos, moves, num_moves, false);
             for (int i = 0; i < num_moves; ++i) {
                 char movestr[6];
                 chess::move_str(moves[i], movestr, pos.flipped);

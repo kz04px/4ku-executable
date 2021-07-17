@@ -34,6 +34,7 @@ void generate_piece_moves(Move *movelist,
                           int &num_moves,
                           const Position &pos,
                           const Piece piece,
+                          const bool captures,
                           Bitboard (*func)(int, Bitboard)) {
     auto copy = pos.colour[0] & pos.pieces[static_cast<int>(piece)];
     while (copy) {
@@ -42,6 +43,12 @@ void generate_piece_moves(Move *movelist,
 
         auto moves = func(fr, pos.colour[0] | pos.colour[1]);
         moves &= ~pos.colour[0];
+
+        if (captures) {
+            moves &= pos.colour[1];
+        } else {
+            moves &= ~pos.colour[1];
+        }
 
         while (moves) {
             auto to = lsbll(moves);
@@ -52,39 +59,40 @@ void generate_piece_moves(Move *movelist,
     }
 }
 
-int movegen(const Position &pos, Move *movelist) {
-    int num_moves = 0;
-
+void movegen(const Position &pos, Move *movelist, int &num_moves, const bool captures) {
     const auto all = pos.colour[0] | pos.colour[1];
     const auto empty = ~all;
     const auto pawns = pos.colour[0] & pos.pieces[static_cast<int>(Piece::Pawn)];
 
-    // Pawns
-    generate_pawn_moves(movelist, num_moves, north(pawns) & empty, -8);
-    generate_pawn_moves(movelist, num_moves, north(north(pawns & Bitboard(0xFF00ULL)) & empty) & empty, -16);
-    generate_pawn_moves(movelist, num_moves, nw(pawns) & (pos.colour[1] | pos.ep), -7);
-    generate_pawn_moves(movelist, num_moves, ne(pawns) & (pos.colour[1] | pos.ep), -9);
+    if (captures) {
+        // Pawn captures
+        generate_pawn_moves(movelist, num_moves, nw(pawns) & (pos.colour[1] | pos.ep), -7);
+        generate_pawn_moves(movelist, num_moves, ne(pawns) & (pos.colour[1] | pos.ep), -9);
+    } else {
+        // Pawn quiets
+        generate_pawn_moves(movelist, num_moves, north(pawns) & empty, -8);
+        generate_pawn_moves(movelist, num_moves, north(north(pawns & Bitboard(0xFF00ULL)) & empty) & empty, -16);
+
+        // Castling - King side
+        if (pos.castling[0] && !(all & Bitboard(0x60ULL)) && !attacked(pos, Square::e1, true) &&
+            !attacked(pos, Square::f1, true) && !attacked(pos, Square::g1, true)) {
+            add_move(movelist, num_moves, Square::e1, Square::g1, Piece::None);
+        }
+
+        // Castling - Queen side
+        if (pos.castling[1] && !(all & Bitboard(0xEULL)) && !attacked(pos, Square::e1, true) &&
+            !attacked(pos, Square::d1, true) && !attacked(pos, Square::c1, true)) {
+            add_move(movelist, num_moves, Square::e1, Square::c1, Piece::None);
+        }
+    }
+
     // Others
-    generate_piece_moves(movelist, num_moves, pos, Piece::Knight, raycast::knight);
-    generate_piece_moves(movelist, num_moves, pos, Piece::Bishop, raycast::bishop);
-    generate_piece_moves(movelist, num_moves, pos, Piece::Queen, raycast::bishop);
-    generate_piece_moves(movelist, num_moves, pos, Piece::Rook, raycast::rook);
-    generate_piece_moves(movelist, num_moves, pos, Piece::Queen, raycast::rook);
-    generate_piece_moves(movelist, num_moves, pos, Piece::King, raycast::king);
-
-    // Castling - King side
-    if (pos.castling[0] && !(all & Bitboard(0x60ULL)) && !attacked(pos, Square::e1, true) &&
-        !attacked(pos, Square::f1, true) && !attacked(pos, Square::g1, true)) {
-        add_move(movelist, num_moves, Square::e1, Square::g1, Piece::None);
-    }
-
-    // Castling - Queen side
-    if (pos.castling[1] && !(all & Bitboard(0xEULL)) && !attacked(pos, Square::e1, true) &&
-        !attacked(pos, Square::d1, true) && !attacked(pos, Square::c1, true)) {
-        add_move(movelist, num_moves, Square::e1, Square::c1, Piece::None);
-    }
-
-    return num_moves;
+    generate_piece_moves(movelist, num_moves, pos, Piece::Knight, captures, raycast::knight);
+    generate_piece_moves(movelist, num_moves, pos, Piece::Bishop, captures, raycast::bishop);
+    generate_piece_moves(movelist, num_moves, pos, Piece::Rook, captures, raycast::rook);
+    generate_piece_moves(movelist, num_moves, pos, Piece::Queen, captures, raycast::bishop);
+    generate_piece_moves(movelist, num_moves, pos, Piece::Queen, captures, raycast::rook);
+    generate_piece_moves(movelist, num_moves, pos, Piece::King, captures, raycast::king);
 }
 
 }  // namespace chess

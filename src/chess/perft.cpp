@@ -14,7 +14,9 @@ std::uint64_t perft(const Position &pos, const int depth) {
 
     std::uint64_t nodes = 0;
     Move moves[256];
-    const int num_moves = movegen(pos, moves);
+    int num_moves = 0;
+    movegen(pos, moves, num_moves, true);
+    movegen(pos, moves, num_moves, false);
 
     for (int i = 0; i < num_moves; ++i) {
         auto npos = pos;
