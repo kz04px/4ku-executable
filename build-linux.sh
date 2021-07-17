@@ -29,7 +29,7 @@ strip engine/4ku --strip-all \
       --keep-section=".rodata" \
       --keep-section=".text"
 
-xz ./engine/4ku
-cat ../../launcher.sh ./engine/4ku.xz > ./engine/4ku
-rm ./engine/4ku.xz
+lzma ./engine/4ku
+cat ../../launcher.sh ./engine/4ku.lzma > ./engine/4ku
+rm ./engine/4ku.lzma
 chmod +x ./engine/4ku
