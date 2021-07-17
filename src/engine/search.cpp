@@ -25,7 +25,13 @@ const int material[] = {100, 300, 325, 500, 900};
     return score;
 }
 
-int alphabeta(const chess::Position &pos, int alpha, const int beta, int depth, int ply, const int stop_time, chess::Move pvline[]) {
+int alphabeta(const chess::Position &pos,
+              int alpha,
+              const int beta,
+              int depth,
+              int ply,
+              const int stop_time,
+              chess::Move pvline[]) {
     const int ksq = chess::lsbll(pos.colour[0] & pos.pieces[static_cast<int>(chess::Piece::King)]);
     const auto in_check = chess::attacked(pos, ksq, true);
 
@@ -44,7 +50,7 @@ int alphabeta(const chess::Position &pos, int alpha, const int beta, int depth, 
     int best_move_idx = -1;
 
     for (int i = 0; i < num_moves; ++i) {
-        if(moves[i] == pvline[ply]) {
+        if (moves[i] == pvline[ply]) {
             moves[i] = moves[0];
             moves[0] = pvline[ply];
             break;
@@ -89,9 +95,10 @@ int alphabeta(const chess::Position &pos, int alpha, const int beta, int depth, 
         }
     }
 
-    if(raisedAlpha) {
+    if (raisedAlpha) {
         pvline[ply] = moves[best_move_idx];
     }
+
     return best_score;
 }
 
