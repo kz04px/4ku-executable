@@ -47,7 +47,6 @@ int alphabeta(const chess::Position &pos,
     chess::Move moves[256];
     const int num_moves = chess::movegen(pos, moves);
     int best_score = -INF;
-    int best_move_idx = -1;
 
     for (int i = 0; i < num_moves; ++i) {
         if (moves[i] == pvline[ply]) {
@@ -57,7 +56,6 @@ int alphabeta(const chess::Position &pos,
         }
     }
 
-    bool raisedAlpha = false;
     for (int i = 0; i < num_moves; ++i) {
         auto npos = pos;
 
@@ -70,11 +68,10 @@ int alphabeta(const chess::Position &pos,
 
         if (score > best_score) {
             best_score = score;
-            best_move_idx = i;
 
             if (score > alpha) {
                 alpha = score;
-                raisedAlpha = true;
+                pvline[ply] = moves[i];
             }
         }
 
@@ -84,7 +81,7 @@ int alphabeta(const chess::Position &pos,
     }
 
     // No legal moves
-    if (best_move_idx == -1) {
+    if (best_score == -INF) {
         // Checkmate
         if (in_check) {
             return -MATE_SCORE;
@@ -93,10 +90,6 @@ int alphabeta(const chess::Position &pos,
         else {
             return 0;
         }
-    }
-
-    if (raisedAlpha) {
-        pvline[ply] = moves[best_move_idx];
     }
 
     return best_score;
