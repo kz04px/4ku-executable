@@ -12,8 +12,7 @@ struct Move {
     Piece promo;
 };
 
-inline bool operator ==(const Move& lhs, const Move& rhs)
-{
+[[maybe_unused]] static bool operator==(const Move &lhs, const Move &rhs) {
     return lhs.from == rhs.from && lhs.to == rhs.to && lhs.promo == rhs.promo;
 }
 
