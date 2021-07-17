@@ -7,10 +7,11 @@
 namespace uci {
 
 void go(chess::Position &pos, const int time) {
-    char bestmove_str[] = "bestmove 123456";
-
     const auto stop_time = clock() + time / 30'000.0f * CLOCKS_PER_SEC;
+    char bestmove_str[] = "bestmove 123456";
     chess::Move pvline[128];
+
+    // Iterative deepening
     for (int i = 1; i < 128; ++i) {
         search::alphabeta(pos, -INF, INF, i, 0, stop_time, pvline);
 
