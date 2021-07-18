@@ -87,7 +87,7 @@ int alphabeta(const chess::Position &pos,
         }
 
         if (alpha >= beta) {
-            break;
+            return beta;
         }
     }
 
@@ -103,7 +103,7 @@ int alphabeta(const chess::Position &pos,
         }
     }
 
-    return best_score;
+    return alpha;
 }
 
 }  // namespace search
