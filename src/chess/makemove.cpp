@@ -50,10 +50,11 @@ bool makemove(Position &pos, const Move &move) {
     }
 
     // Remove castling permissions
-    pos.castling[0] &= (move.to != Square::h1 && move.from != Square::h1 && move.from != Square::e1);
-    pos.castling[1] &= (move.to != Square::a1 && move.from != Square::a1 && move.from != Square::e1);
-    pos.castling[2] &= (move.to != Square::h8 && move.from != Square::h8 && move.from != Square::e8);
-    pos.castling[3] &= (move.to != Square::a8 && move.from != Square::a8 && move.from != Square::e8);
+    const auto changed = (1ULL << move.to) | (1ULL << move.from);
+    pos.castling[0] &= !(changed & 0x90ULL);
+    pos.castling[1] &= !(changed & 0x11ULL);
+    pos.castling[2] &= !(changed & 0x9000000000000000ULL);
+    pos.castling[3] &= !(changed & 0x1100000000000000ULL);
 
     // Flip the board
     flip(pos);
