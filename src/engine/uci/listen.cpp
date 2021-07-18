@@ -15,8 +15,6 @@ void listen() {
 
     // Pretend to wait for "uci"
     getchar();
-    getchar();
-    getchar();
 
     // Tell the GUI about us
     puts("id name 4ku\nid author kz04px\nuciok");
