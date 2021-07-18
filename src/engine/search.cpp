@@ -54,7 +54,7 @@ int alphabeta(const chess::Position &pos,
     chess::Move moves[256];
     int num_moves = 0;
     chess::movegen(pos, moves, num_moves, true);
-    if (depth <= 0) {
+    if (depth > 0) {
         chess::movegen(pos, moves, num_moves, false);
     }
 
