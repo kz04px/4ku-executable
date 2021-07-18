@@ -6,7 +6,7 @@ namespace chess {
 struct Position;
 struct Move;
 
-[[nodiscard]] int movegen(const Position &pos, Move *movelist);
+void movegen(const Position &pos, Move *movelist, int &num_moves, const bool captures);
 
 }  // namespace chess
 

@@ -35,8 +35,15 @@ int alphabeta(const chess::Position &pos,
     const int ksq = chess::lsbll(pos.colour[0] & pos.pieces[static_cast<int>(chess::Piece::King)]);
     const auto in_check = chess::attacked(pos, ksq, true);
 
-    if (depth == 0) {
-        return eval(pos);
+    if (depth <= 0) {
+        const auto static_eval = eval(pos);
+        if (static_eval >= beta) {
+            return beta;
+        }
+
+        if (alpha < static_eval) {
+            alpha = static_eval;
+        }
     }
 
     // Did we run out of time?
@@ -45,8 +52,11 @@ int alphabeta(const chess::Position &pos,
     }
 
     chess::Move moves[256];
-    const int num_moves = chess::movegen(pos, moves);
-    int best_score = -INF;
+    int num_moves = 0;
+    chess::movegen(pos, moves, num_moves, true);
+    if (depth <= 0) {
+        chess::movegen(pos, moves, num_moves, false);
+    }
 
     for (int i = 0; i < num_moves; ++i) {
         if (moves[i] == pvline[ply]) {
@@ -56,6 +66,7 @@ int alphabeta(const chess::Position &pos,
         }
     }
 
+    int best_score = -INF;
     for (int i = 0; i < num_moves; ++i) {
         auto npos = pos;
 
@@ -81,7 +92,7 @@ int alphabeta(const chess::Position &pos,
     }
 
     // No legal moves
-    if (best_score == -INF) {
+    if (depth > 0 && best_score == -INF) {
         // Checkmate
         if (in_check) {
             return -MATE_SCORE;
