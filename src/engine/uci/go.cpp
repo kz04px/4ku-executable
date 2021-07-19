@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <chess/move.hpp>
 #include <chess/position.hpp>
+#include <chrono>
 #include "../search.hpp"
 #include "listen.hpp"
 
 namespace uci {
 
 void go(chess::Position &pos, const int time) {
-    const auto stop_time = clock() + time / 30'000.0f * CLOCKS_PER_SEC;
+    const auto stop_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(time / 32);
     char bestmove_str[] = "bestmove 123456";
     chess::Move pvline[128];
 
@@ -16,7 +17,7 @@ void go(chess::Position &pos, const int time) {
         search::alphabeta(pos, -INF, INF, i, 0, stop_time, pvline);
 
         // Did we run out of time?
-        if (clock() >= stop_time) {
+        if (std::chrono::steady_clock::now() >= stop_time) {
             break;
         }
 
