@@ -16,7 +16,7 @@ int alphabeta(const chess::Position &pos,
               const int beta,
               int depth,
               const int ply,
-              const int stop_time,
+              const long long int stop_time,
               chess::Move *pvline);
 
 }  // namespace search
