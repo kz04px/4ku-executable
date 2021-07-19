@@ -9,7 +9,7 @@
 
 namespace search {
 
-const int material[] = {100, 300, 325, 500, 900};
+const int material[] = {100, 300, 325, 500, 900, 0};
 
 [[nodiscard]] int eval(const chess::Position &pos) {
     int score = 0;
