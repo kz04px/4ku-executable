@@ -15,9 +15,21 @@ const int material[] = {100, 300, 325, 500, 900};
     int score = 0;
 
     for (int c = 0; c < 2; ++c) {
-        // Material
-        for (int p = 0; p < 5; ++p) {
-            score += material[p] * chess::count(pos.pieces[p] & pos.colour[c]);
+        for (int p = 0; p < 6; ++p) {
+            auto copy = pos.colour[c] & pos.pieces[p];
+            while (copy) {
+                const auto fr = chess::lsbll(copy);
+                copy &= copy - 1;
+
+                // PST
+                const int rank = fr >> 3;
+                const int file = fr & 7;
+                const int center_tropism = -std::abs(7 - rank - file) - std::abs(rank - file);
+                score += center_tropism * (6 - p);
+
+                // Material
+                score += material[p];
+            }
         }
 
         score = -score;
