@@ -1,4 +1,5 @@
 #include "search.hpp"
+#include "time.hpp"
 #include <chess/attack.hpp>
 #include <chess/bitboard.hpp>
 #include <chess/makemove.hpp>
@@ -30,7 +31,7 @@ int alphabeta(const chess::Position &pos,
               const int beta,
               int depth,
               const int ply,
-              const std::chrono::time_point<std::chrono::steady_clock> stop_time,
+              const long long int stop_time,
               chess::Move *pvline) {
     const int ksq = chess::lsbll(pos.colour[0] & pos.pieces[static_cast<int>(chess::Piece::King)]);
     const auto in_check = chess::attacked(pos, ksq, true);
@@ -40,7 +41,7 @@ int alphabeta(const chess::Position &pos,
     }
 
     // Did we run out of time?
-    if (std::chrono::steady_clock::now() >= stop_time) {
+    if (now() >= stop_time) {
         return 0;
     }
 
