@@ -44,7 +44,7 @@ int alphabeta(const chess::Position &pos,
               int depth,
               const int ply,
               const long long int stop_time,
-              SeachStack *pvline) {
+              chess::Move *pvline) {
     const int ksq = chess::lsbll(pos.colour[0] & pos.pieces[static_cast<int>(chess::Piece::King)]);
     const auto in_check = chess::attacked(pos, ksq, true);
 
@@ -74,12 +74,12 @@ int alphabeta(const chess::Position &pos,
         int bestMoveScoreIndex = i;
         for (int j = i; j < num_moves; ++j) {
             auto moveScore = 0;
-            if (moves[j] == pvline[ply].pv) {
+            if (moves[j] == pvline[ply]) {
                 moveScore = 1 << 16;
             } else {
                 const auto capture = chess::piece_on(pos, moves[j].to);
                 if (capture != chess::Piece::None) {
-                    moveScore = (static_cast<int>(capture)+1) * 8 - (static_cast<int>(chess::piece_on(pos, moves[j].from))+1 );
+                    moveScore = ((static_cast<int>(capture) + 1) * 8) - static_cast<int>(chess::piece_on(pos, moves[j].from));
                 }
             }
             if (moveScore > bestMoveScore) {
@@ -110,7 +110,7 @@ int alphabeta(const chess::Position &pos,
 
             if (score > alpha) {
                 alpha = score;
-                pvline[ply].pv = moves[i];
+                pvline[ply] = moves[i];
             }
         }
 
