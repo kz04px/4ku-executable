@@ -44,7 +44,7 @@ int alphabeta(const chess::Position &pos,
               int depth,
               const int ply,
               const long long int stop_time,
-              chess::Move *pvline) {
+              SeachStack *pvline) {
     const int ksq = chess::lsbll(pos.colour[0] & pos.pieces[static_cast<int>(chess::Piece::King)]);
     const auto in_check = chess::attacked(pos, ksq, true);
 
@@ -70,14 +70,28 @@ int alphabeta(const chess::Position &pos,
     int best_score = -INF;
 
     for (int i = 0; i < num_moves; ++i) {
-        if (moves[i] == pvline[ply]) {
-            moves[i] = moves[0];
-            moves[0] = pvline[ply];
-            break;
+        int bestMoveScore = 0;
+        int bestMoveScoreIndex = i;
+        for (int j = i; j < num_moves; ++j) {
+            auto moveScore = 0;
+            if (moves[j] == pvline[ply].pv) {
+                moveScore = 1 << 16;
+            } else {
+                const auto capture = chess::piece_on(pos, moves[j].to);
+                if (capture != chess::Piece::None) {
+                    moveScore = (static_cast<int>(capture)+1) * 8 - (static_cast<int>(chess::piece_on(pos, moves[j].from))+1 );
+                }
+            }
+            if (moveScore > bestMoveScore) {
+                bestMoveScore = moveScore;
+                bestMoveScoreIndex = j;
+            }
         }
-    }
 
-    for (int i = 0; i < num_moves; ++i) {
+        const auto tempMove = moves[i];
+        moves[i] = moves[bestMoveScoreIndex];
+        moves[bestMoveScoreIndex] = tempMove;
+
         auto npos = pos;
 
         if (depth <= 0 && chess::piece_on(pos, moves[i].to) == chess::Piece::None) {
@@ -96,7 +110,7 @@ int alphabeta(const chess::Position &pos,
 
             if (score > alpha) {
                 alpha = score;
-                pvline[ply] = moves[i];
+                pvline[ply].pv = moves[i];
             }
         }
 
