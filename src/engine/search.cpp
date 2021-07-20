@@ -48,8 +48,16 @@ int alphabeta(const chess::Position &pos,
     const int ksq = chess::lsbll(pos.colour[0] & pos.pieces[static_cast<int>(chess::Piece::King)]);
     const auto in_check = chess::attacked(pos, ksq, true);
 
-    if (depth == 0) {
-        return eval(pos);
+    if (depth <= 0) {
+        const int static_eval = eval(pos);
+
+        if (static_eval >= beta) {
+            return beta;
+        }
+
+        if (alpha < static_eval) {
+            alpha = static_eval;
+        }
     }
 
     // Did we run out of time?
@@ -71,6 +79,10 @@ int alphabeta(const chess::Position &pos,
 
     for (int i = 0; i < num_moves; ++i) {
         auto npos = pos;
+
+        if (depth <= 0 && chess::piece_on(pos, moves[i].to) == chess::Piece::None) {
+            continue;
+        }
 
         // Check move legality
         if (!chess::makemove(npos, moves[i])) {
@@ -94,7 +106,7 @@ int alphabeta(const chess::Position &pos,
     }
 
     // No legal moves
-    if (best_score == -INF) {
+    if (depth > 0 && best_score == -INF) {
         // Checkmate
         if (in_check) {
             return -MATE_SCORE;
@@ -105,7 +117,7 @@ int alphabeta(const chess::Position &pos,
         }
     }
 
-    return best_score;
+    return alpha;
 }
 
 }  // namespace search
