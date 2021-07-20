@@ -65,6 +65,10 @@ int alphabeta(const chess::Position &pos,
         return 0;
     }
 
+    if (in_check) {
+        ++depth;
+    }
+
     chess::Move moves[256];
     const int num_moves = chess::movegen(pos, moves);
     int best_score = -INF;
