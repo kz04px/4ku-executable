@@ -48,9 +48,14 @@ int alphabeta(const chess::Position &pos,
     const int ksq = chess::lsbll(pos.colour[0] & pos.pieces[static_cast<int>(chess::Piece::King)]);
     const auto in_check = chess::attacked(pos, ksq, true);
 
-    if (depth <= 0) {
-        const int static_eval = eval(pos);
+    if (in_check) {
+        ++depth;
+    }
 
+    const bool qsearch = depth <= 0;
+    //const int static_eval = eval(pos);
+    if (qsearch) {
+        const int static_eval = eval(pos);
         if (static_eval >= beta) {
             return beta;
         }
@@ -60,13 +65,13 @@ int alphabeta(const chess::Position &pos,
         }
     }
 
+    //if (!qsearch && static_eval - 175 * depth >= beta) {
+    //    return static_eval;
+    //}
+
     // Did we run out of time?
     if (now() >= stop_time) {
         return 0;
-    }
-
-    if (in_check) {
-        ++depth;
     }
 
     chess::Move moves[256];
@@ -74,33 +79,33 @@ int alphabeta(const chess::Position &pos,
     int best_score = -INF;
 
     for (int i = 0; i < num_moves; ++i) {
-        int bestMoveScore = 0;
-        int bestMoveScoreIndex = i;
+        int best_move_score = 0;
+        int best_move_score_index = i;
         for (int j = i; j < num_moves; ++j) {
-            auto moveScore = 0;
+            auto move_score = 0;
             if (moves[j] == pvline[ply]) {
-                moveScore = 1 << 16;
+                move_score = 1 << 16;
             } else {
                 const auto capture = chess::piece_on(pos, moves[j].to);
                 if (capture != chess::Piece::None) {
-                    moveScore = ((static_cast<int>(capture) + 1) * 8) - static_cast<int>(chess::piece_on(pos, moves[j].from));
+                    move_score = ((static_cast<int>(capture) + 1) * 8) - static_cast<int>(chess::piece_on(pos, moves[j].from));
                 }
             }
-            if (moveScore > bestMoveScore) {
-                bestMoveScore = moveScore;
-                bestMoveScoreIndex = j;
+            if (move_score > best_move_score) {
+                best_move_score = move_score;
+                best_move_score_index = j;
             }
         }
 
         const auto tempMove = moves[i];
-        moves[i] = moves[bestMoveScoreIndex];
-        moves[bestMoveScoreIndex] = tempMove;
+        moves[i] = moves[best_move_score_index];
+        moves[best_move_score_index] = tempMove;
 
-        auto npos = pos;
-
-        if (depth <= 0 && chess::piece_on(pos, moves[i].to) == chess::Piece::None) {
+        if (qsearch && chess::piece_on(pos, moves[i].to) == chess::Piece::None) {
             continue;
         }
+
+        auto npos = pos;
 
         // Check move legality
         if (!chess::makemove(npos, moves[i])) {
@@ -124,7 +129,7 @@ int alphabeta(const chess::Position &pos,
     }
 
     // No legal moves
-    if (depth > 0 && best_score == -INF) {
+    if (!qsearch && best_score == -INF) {
         // Checkmate
         if (in_check) {
             return -MATE_SCORE;
