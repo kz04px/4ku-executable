@@ -15,9 +15,7 @@ void valid(const chess::Move &move) {
                            chess::raycast::rook(move.from, 0x0ULL);
     REQUIRE(move.to != move.from);
     REQUIRE(chess::Bitboard(1ULL << move.to) & supermove);
-    REQUIRE(move.promo != chess::Piece::Pawn);
-    REQUIRE(move.promo != chess::Piece::King);
-    REQUIRE((move.to >= chess::Square::a8 || move.promo == chess::Piece::None));
+    REQUIRE(move.place_piece != chess::Piece::None);
 }
 
 void test(chess::Position &pos, const int depth) {

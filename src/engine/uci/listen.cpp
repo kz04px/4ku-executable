@@ -53,7 +53,7 @@ void listen() {
             const int num_moves = chess::movegen(pos, moves);
             for (int i = 0; i < num_moves; ++i) {
                 char movestr[6];
-                chess::move_str(moves[i], movestr, pos.flipped);
+                chess::move_str(pos, moves[i], movestr);
                 if (strncmp(movestr, word, strlen(movestr)) == 0) {
                     chess::makemove(pos, moves[i]);
                     break;

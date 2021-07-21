@@ -8,8 +8,8 @@
 
 namespace chess {
 
-void add_move(chess::Move *movelist, int &num_moves, const int from, const int to, const chess::Piece promo) {
-    movelist[num_moves] = Move{from, to, promo};
+void add_move(chess::Move *movelist, int &num_moves, const int from, const int to, const chess::Piece place_piece) {
+    movelist[num_moves] = Move{from, to, place_piece};
     num_moves++;
 }
 
@@ -25,7 +25,7 @@ void generate_pawn_moves(Move *movelist, int &num_moves, Bitboard to_mask, const
             add_move(movelist, num_moves, to + offset, to, Piece::Bishop);
             add_move(movelist, num_moves, to + offset, to, Piece::Knight);
         } else {
-            add_move(movelist, num_moves, to + offset, to, Piece::None);
+            add_move(movelist, num_moves, to + offset, to, Piece::Pawn);
         }
     }
 }
@@ -47,7 +47,7 @@ void generate_piece_moves(Move *movelist,
             auto to = lsbll(moves);
             moves &= moves - 1;
 
-            add_move(movelist, num_moves, fr, to, Piece::None);
+            add_move(movelist, num_moves, fr, to, piece);
         }
     }
 }
@@ -75,13 +75,13 @@ int movegen(const Position &pos, Move *movelist) {
     // Castling - King side
     if (pos.castling[0] && !(all & Bitboard(0x60ULL)) && !attacked(pos, Square::e1, true) &&
         !attacked(pos, Square::f1, true)) {
-        add_move(movelist, num_moves, Square::e1, Square::g1, Piece::None);
+        add_move(movelist, num_moves, Square::e1, Square::g1, Piece::King);
     }
 
     // Castling - Queen side
     if (pos.castling[1] && !(all & Bitboard(0xEULL)) && !attacked(pos, Square::e1, true) &&
         !attacked(pos, Square::d1, true)) {
-        add_move(movelist, num_moves, Square::e1, Square::c1, Piece::None);
+        add_move(movelist, num_moves, Square::e1, Square::c1, Piece::King);
     }
 
     return num_moves;
