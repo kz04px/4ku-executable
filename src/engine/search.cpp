@@ -52,9 +52,9 @@ int alphabeta(const chess::Position &pos,
         ++depth;
     }
 
-    const bool qsearch = depth <= 0;
-    //const int static_eval = eval(pos);
-    if (qsearch) {
+    const bool in_qsearch = depth <= 0;
+
+    if (in_qsearch) {
         const int static_eval = eval(pos);
         if (static_eval >= beta) {
             return beta;
@@ -64,10 +64,6 @@ int alphabeta(const chess::Position &pos,
             alpha = static_eval;
         }
     }
-
-    //if (!qsearch && static_eval - 175 * depth >= beta) {
-    //    return static_eval;
-    //}
 
     // Did we run out of time?
     if (now() >= stop_time) {
@@ -83,7 +79,7 @@ int alphabeta(const chess::Position &pos,
         int best_move_score_index = i;
         for (int j = i; j < num_moves; ++j) {
             auto move_score = 0;
-            if (moves[j] == pvline[ply]) {
+            if (!in_qsearch && moves[j] == pvline[ply]) {
                 move_score = 1 << 16;
             } else {
                 const auto capture = chess::piece_on(pos, moves[j].to);
@@ -101,8 +97,8 @@ int alphabeta(const chess::Position &pos,
         moves[i] = moves[best_move_score_index];
         moves[best_move_score_index] = tempMove;
 
-        if (qsearch && chess::piece_on(pos, moves[i].to) == chess::Piece::None) {
-            continue;
+        if (in_qsearch && chess::piece_on(pos, moves[i].to) == chess::Piece::None) {
+            break;
         }
 
         auto npos = pos;
@@ -129,7 +125,7 @@ int alphabeta(const chess::Position &pos,
     }
 
     // No legal moves
-    if (!qsearch && best_score == -INF) {
+    if (!in_qsearch && best_score == -INF) {
         // Checkmate
         if (in_check) {
             return -MATE_SCORE;
