@@ -13,6 +13,10 @@ struct Move {
     Piece place_piece;
 };
 
+[[nodiscard]] inline bool operator==(const Move &lhs, const Move &rhs) noexcept {
+    return lhs.from == rhs.from && lhs.to == rhs.to && lhs.place_piece == rhs.place_piece;
+}
+
 [[maybe_unused]] static void move_str(const Position &pos, const Move &move, char *str) {
     static constexpr char promos[] = {'\0', 'n', 'b', 'r', 'q'};
 
