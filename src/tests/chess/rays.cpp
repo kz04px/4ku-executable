@@ -1,4 +1,5 @@
 #include <catch2/catch.hpp>
+#include <chess/bitboard.hpp>
 #include <chess/raycast.hpp>
 
 TEST_CASE("raycast north") {
@@ -7,10 +8,10 @@ TEST_CASE("raycast north") {
         {0x10000000000000ULL, 0x10101000000000ULL},
     };
 
-    REQUIRE(chess::raycast::N(0, 0x0ULL) == chess::Bitboard(0x101010101010100ULL));
+    REQUIRE(chess::raycast::cast(0, 0x0ULL, chess::north) == chess::Bitboard(0x101010101010100ULL));
 
     for (const auto &[blockers, mask] : tests) {
-        REQUIRE(chess::raycast::N(28, blockers) == mask);
+        REQUIRE(chess::raycast::cast(28, blockers, chess::north) == mask);
     }
 }
 
@@ -20,7 +21,7 @@ TEST_CASE("raycast west") {
     };
 
     for (const auto &[blockers, mask] : tests) {
-        REQUIRE(chess::raycast::W(28, blockers) == mask);
+        REQUIRE(chess::raycast::cast(28, blockers, chess::west) == mask);
     }
 }
 
