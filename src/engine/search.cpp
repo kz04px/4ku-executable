@@ -6,26 +6,71 @@
 #include <chess/move.hpp>
 #include <chess/movegen.hpp>
 #include <chess/position.hpp>
+#include <chess/raycast.hpp>
 
 namespace search {
 
 const int material[] = {100, 300, 325, 500, 900, 0};
+//const int forward[] = {10, 0, 0, 0, 0, 0};
+//const int forwardOffset[] = {-20, 0, 0, 0, 0, 0};
+const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
 
 [[nodiscard]] int eval(const chess::Position &pos) {
     int score = 0;
 
     for (int c = 0; c < 2; ++c) {
+        //const auto opp_kings = pos.colour[c ^ 1] & pos.pieces[static_cast<int>(chess::Piece::King)];
+        //const auto opp_king = chess::lsbll(opp_kings);
+        //const auto opp_king_zone = chess::raycast::king(opp_king, 0ULL);
+        //const auto blockers = pos.colour[0];
+
+        auto opp_pawns = pos.colour[c ^ 1] & pos.pieces[static_cast<int>(chess::Piece::Pawn)];
+
         for (int p = 0; p < 6; ++p) {
             auto copy = pos.colour[c] & pos.pieces[p];
             while (copy) {
                 const auto sq = chess::lsbll(copy);
                 copy &= copy - 1;
 
-                // PST
+                // Centrality
                 const int rank = sq >> 3;
                 const int file = sq & 7;
                 const int center_tropism = -std::abs(7 - rank - file) - std::abs(rank - file);
                 score += center_tropism * (6 - p);
+
+                // Pawn eval
+                if (p == static_cast<int>(chess::Piece::Pawn)) {
+                    const auto bb = 1ULL << sq;
+
+                    // Passed pawns
+                    auto attack = c == 0 ? chess::nw(bb) | chess::ne(bb) : chess::sw(bb) | chess::se(bb);
+                    for (auto i = 0; i < 4; i++) {
+                        attack |= c == 0 ? chess::north(attack) : chess::south(attack);
+                    }
+                    const auto is_passed = (attack & opp_pawns) == 0;
+                    if (is_passed) {
+                        const auto rel_rank = c == 0 ? rank : 7 - rank;
+                        score += passers[rel_rank];
+                    }
+                }
+
+                //auto attack = 0ULL;
+                //switch (p) {
+                //    case static_cast<int>(chess::Piece::Knight):
+                //        attack = chess::raycast::knight(sq, blockers);
+                //        break;
+                //    case static_cast<int>(chess::Piece::Bishop):
+                //        attack = chess::raycast::bishop(sq, blockers);
+                //        break;
+                //    case static_cast<int>(chess::Piece::Rook):
+                //        attack = chess::raycast::rook(sq, blockers);
+                //        break;
+                //    case static_cast<int>(chess::Piece::Queen):
+                //        attack = chess::raycast::bishop(sq, blockers) | chess::raycast::rook(sq, blockers);
+                //        break;
+                //}
+
+                //score += chess::count(opp_king_zone & attack);
 
                 // Material
                 score += material[p];
