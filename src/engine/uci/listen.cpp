@@ -8,6 +8,18 @@
 
 namespace uci {
 
+void next(char *ptr) {
+    char c;
+    while ((c = getchar())) {
+        if (c == '\n' || c == '\0' || c == ' ') {
+            break;
+        }
+        *ptr = c;
+        ptr++;
+    }
+    *ptr = '\0';
+}
+
 void listen() {
     char word[4096];
     auto pos = chess::Position();
@@ -21,16 +33,7 @@ void listen() {
 
     while (true) {
         // Get next word
-        char *ptr = word;
-        char c;
-        while ((c = getchar())) {
-            if (c == '\n' || c == '\0' || c == ' ') {
-                break;
-            }
-            *ptr = c;
-            ptr++;
-        }
-        *ptr = '\0';
+        next(word);
 
         // quit
         if (word[0] == 'q') {
@@ -42,7 +45,17 @@ void listen() {
         }
         // go
         else if (word[0] == 'g' && word[1] == 'o') {
-            go(pos);
+            // wtime
+            next(word);
+            next(word);
+            const int wtime = atoi(word);
+
+            // btime
+            next(word);
+            next(word);
+            const int btime = atoi(word);
+
+            go(pos, pos.flipped ? btime : wtime);
         }
         // position
         else if (word[0] == 'p' && word[1] == 'o') {

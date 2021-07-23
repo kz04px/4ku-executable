@@ -22,6 +22,7 @@ add_executable(
 
     main.cpp
     search.cpp
+    time.cpp
 
     # Chess
     ../chess/attack.cpp

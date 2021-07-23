@@ -6,10 +6,22 @@
 
 namespace uci {
 
-void go(chess::Position &pos) {
-    const auto bestmove = search::dumb(pos);
+void go(chess::Position &pos, const int time) {
+    const auto stop_time = now() + time / 30;
     char bestmove_str[] = "bestmove 123456";
-    chess::move_str(pos, bestmove, &bestmove_str[9]);
+    chess::Move bestmove;
+
+    for (int i = 0; i < 128; ++i) {
+        search::search(pos, -search::inf, search::inf, i, bestmove, stop_time);
+
+        // Did we run out of time?
+        if (now() >= stop_time) {
+            break;
+        }
+
+        chess::move_str(pos, bestmove, &bestmove_str[9]);
+    }
+
     puts(bestmove_str);
 }
 

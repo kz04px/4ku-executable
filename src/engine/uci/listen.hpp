@@ -8,7 +8,7 @@ class Position;
 namespace uci {
 
 void listen();
-void go(chess::Position &pos);
+void go(chess::Position &pos, const int time);
 
 }  // namespace uci
 
