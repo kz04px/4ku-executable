@@ -1,8 +1,8 @@
 #ifndef SEARCH_HPP
 #define SEARCH_HPP
 
-#define MATE_SCORE 10'000'000
-#define INF 20'000'000
+#define MATE_SCORE (1 << 15)
+#define INF (1 << 16)
 
 namespace chess {
 class Position;
