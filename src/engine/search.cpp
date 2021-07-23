@@ -6,18 +6,50 @@
 #include <chess/move.hpp>
 #include <chess/movegen.hpp>
 #include <chess/position.hpp>
+#include <chess/raycast.hpp>
 
 namespace search {
 
-const int material[] = {100, 300, 325, 500, 900};
+const int material[] = {100, 300, 325, 500, 900, 0};
+const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
 
 [[nodiscard]] int eval(const chess::Position &pos) {
     int score = 0;
 
     for (int c = 0; c < 2; ++c) {
-        // Material
-        for (int p = 0; p < 5; ++p) {
-            score += material[p] * chess::count(pos.pieces[p] & pos.colour[c]);
+        const auto opp_pawns = pos.colour[c ^ 1] & pos.pieces[static_cast<int>(chess::Piece::Pawn)];
+
+        for (int p = 0; p < 6; ++p) {
+            auto copy = pos.colour[c] & pos.pieces[p];
+            while (copy) {
+                const auto sq = chess::lsbll(copy);
+                copy &= copy - 1;
+
+                // Centrality
+                const int rank = sq >> 3;
+                const int file = sq & 7;
+                const int centrality = -std::abs(7 - rank - file) - std::abs(rank - file);
+                score += centrality * (6 - p);
+
+                // Pawn eval
+                if (p == static_cast<int>(chess::Piece::Pawn)) {
+                    const auto bb = 1ULL << sq;
+
+                    // Passed pawns
+                    auto attack = c == 0 ? chess::nw(bb) | chess::ne(bb) : chess::sw(bb) | chess::se(bb);
+                    for (auto i = 0; i < 4; ++i) {
+                        attack |= c == 0 ? chess::north(attack) : chess::south(attack);
+                    }
+                    const auto is_passed = (attack & opp_pawns) == 0;
+                    if (is_passed) {
+                        const auto rel_rank = c == 0 ? rank : 7 - rank;
+                        score += passers[rel_rank];
+                    }
+                }
+
+                // Material
+                score += material[p];
+            }
         }
 
         score = -score;
@@ -36,8 +68,21 @@ int alphabeta(const chess::Position &pos,
     const int ksq = chess::lsbll(pos.colour[0] & pos.pieces[static_cast<int>(chess::Piece::King)]);
     const auto in_check = chess::attacked(pos, ksq, true);
 
-    if (depth == 0) {
-        return eval(pos);
+    // In-check extension
+    if (in_check) {
+        ++depth;
+    }
+
+    const bool in_qsearch = depth <= 0;
+    if (in_qsearch) {
+        const int static_eval = eval(pos);
+        if (static_eval >= beta) {
+            return beta;
+        }
+
+        if (alpha < static_eval) {
+            alpha = static_eval;
+        }
     }
 
     // Did we run out of time?
@@ -50,14 +95,37 @@ int alphabeta(const chess::Position &pos,
     int best_score = -INF;
 
     for (int i = 0; i < num_moves; ++i) {
-        if (moves[i] == pvline[ply]) {
-            moves[i] = moves[0];
-            moves[0] = pvline[ply];
+        int best_move_score = 0;
+        int best_move_score_index = i;
+        for (int j = i; j < num_moves; ++j) {
+            auto move_score = 0;
+
+            // PV-move first
+            if (!in_qsearch && moves[j] == pvline[ply]) {
+                move_score = 1 << 16;
+            } else {
+
+                // MVVLVA
+                const auto capture = chess::piece_on(pos, moves[j].to);
+                if (capture != chess::Piece::None) {
+                    move_score = ((static_cast<int>(capture) + 1) * 8) - static_cast<int>(chess::piece_on(pos, moves[j].from));
+                }
+            }
+            if (move_score > best_move_score) {
+                best_move_score = move_score;
+                best_move_score_index = j;
+            }
+        }
+
+        const auto tempMove = moves[i];
+        moves[i] = moves[best_move_score_index];
+        moves[best_move_score_index] = tempMove;
+
+        // Since moves are ordered captures first, break in qsearch
+        if (in_qsearch && chess::piece_on(pos, moves[i].to) == chess::Piece::None) {
             break;
         }
-    }
 
-    for (int i = 0; i < num_moves; ++i) {
         auto npos = pos;
 
         // Check move legality
@@ -82,7 +150,7 @@ int alphabeta(const chess::Position &pos,
     }
 
     // No legal moves
-    if (best_score == -INF) {
+    if (!in_qsearch && best_score == -INF) {
         // Checkmate
         if (in_check) {
             return -MATE_SCORE;
@@ -93,7 +161,7 @@ int alphabeta(const chess::Position &pos,
         }
     }
 
-    return best_score;
+    return alpha;
 }
 
 }  // namespace search
