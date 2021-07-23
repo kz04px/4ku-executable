@@ -30,6 +30,5 @@ add_executable(
 
     # UCI
     uci/go.cpp
-    uci/isready.cpp
     uci/listen.cpp
 )

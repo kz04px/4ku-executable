@@ -38,7 +38,7 @@ void listen() {
         }
         // isready
         else if (word[0] == 'i' && word[1] == 's') {
-            isready();
+            puts("readyok");
         }
         // go
         else if (word[0] == 'g' && word[1] == 'o') {
