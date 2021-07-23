@@ -1,5 +1,4 @@
 #include "search.hpp"
-#include "time.hpp"
 #include <chess/attack.hpp>
 #include <chess/bitboard.hpp>
 #include <chess/makemove.hpp>
@@ -7,6 +6,7 @@
 #include <chess/movegen.hpp>
 #include <chess/position.hpp>
 #include <chess/raycast.hpp>
+#include "time.hpp"
 
 namespace search {
 
@@ -70,7 +70,7 @@ int alphabeta(const chess::Position &pos,
 
     // In-check extension
     if (in_check) {
-        ++depth;
+        depth++;
     }
 
     const bool in_qsearch = depth <= 0;
@@ -104,11 +104,11 @@ int alphabeta(const chess::Position &pos,
             if (!in_qsearch && moves[j] == pvline[ply]) {
                 move_score = 1 << 16;
             } else {
-
                 // MVVLVA
                 const auto capture = chess::piece_on(pos, moves[j].to);
                 if (capture != chess::Piece::None) {
-                    move_score = ((static_cast<int>(capture) + 1) * 8) - static_cast<int>(chess::piece_on(pos, moves[j].from));
+                    move_score =
+                        ((static_cast<int>(capture) + 1) * 8) - static_cast<int>(chess::piece_on(pos, moves[j].from));
                 }
             }
             if (move_score > best_move_score) {
