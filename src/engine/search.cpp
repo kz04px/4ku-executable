@@ -28,8 +28,8 @@ const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
                 // Centrality
                 const int rank = sq >> 3;
                 const int file = sq & 7;
-                const int center_tropism = -std::abs(7 - rank - file) - std::abs(rank - file);
-                score += center_tropism * (6 - p);
+                const int centrality = -std::abs(7 - rank - file) - std::abs(rank - file);
+                score += centrality * (6 - p);
 
                 // Pawn eval
                 if (p == static_cast<int>(chess::Piece::Pawn)) {
@@ -37,7 +37,7 @@ const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
 
                     // Passed pawns
                     auto attack = c == 0 ? chess::nw(bb) | chess::ne(bb) : chess::sw(bb) | chess::se(bb);
-                    for (auto i = 0; i < 4; i++) {
+                    for (auto i = 0; i < 4; ++i) {
                         attack |= c == 0 ? chess::north(attack) : chess::south(attack);
                     }
                     const auto is_passed = (attack & opp_pawns) == 0;
@@ -68,12 +68,12 @@ int alphabeta(const chess::Position &pos,
     const int ksq = chess::lsbll(pos.colour[0] & pos.pieces[static_cast<int>(chess::Piece::King)]);
     const auto in_check = chess::attacked(pos, ksq, true);
 
+    // In-check extension
     if (in_check) {
         ++depth;
     }
 
     const bool in_qsearch = depth <= 0;
-
     if (in_qsearch) {
         const int static_eval = eval(pos);
         if (static_eval >= beta) {
@@ -99,9 +99,13 @@ int alphabeta(const chess::Position &pos,
         int best_move_score_index = i;
         for (int j = i; j < num_moves; ++j) {
             auto move_score = 0;
+
+            // PV-move first
             if (!in_qsearch && moves[j] == pvline[ply]) {
                 move_score = 1 << 16;
             } else {
+
+                // MVVLVA
                 const auto capture = chess::piece_on(pos, moves[j].to);
                 if (capture != chess::Piece::None) {
                     move_score = ((static_cast<int>(capture) + 1) * 8) - static_cast<int>(chess::piece_on(pos, moves[j].from));
@@ -117,6 +121,7 @@ int alphabeta(const chess::Position &pos,
         moves[i] = moves[best_move_score_index];
         moves[best_move_score_index] = tempMove;
 
+        // Since moves are ordered captures first, break in qsearch
         if (in_qsearch && chess::piece_on(pos, moves[i].to) == chess::Piece::None) {
             break;
         }
