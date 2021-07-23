@@ -11,20 +11,13 @@
 namespace search {
 
 const int material[] = {100, 300, 325, 500, 900, 0};
-//const int forward[] = {10, 0, 0, 0, 0, 0};
-//const int forwardOffset[] = {-20, 0, 0, 0, 0, 0};
 const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
 
 [[nodiscard]] int eval(const chess::Position &pos) {
     int score = 0;
 
     for (int c = 0; c < 2; ++c) {
-        //const auto opp_kings = pos.colour[c ^ 1] & pos.pieces[static_cast<int>(chess::Piece::King)];
-        //const auto opp_king = chess::lsbll(opp_kings);
-        //const auto opp_king_zone = chess::raycast::king(opp_king, 0ULL);
-        //const auto blockers = pos.colour[0];
-
-        auto opp_pawns = pos.colour[c ^ 1] & pos.pieces[static_cast<int>(chess::Piece::Pawn)];
+        const auto opp_pawns = pos.colour[c ^ 1] & pos.pieces[static_cast<int>(chess::Piece::Pawn)];
 
         for (int p = 0; p < 6; ++p) {
             auto copy = pos.colour[c] & pos.pieces[p];
@@ -53,24 +46,6 @@ const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
                         score += passers[rel_rank];
                     }
                 }
-
-                //auto attack = 0ULL;
-                //switch (p) {
-                //    case static_cast<int>(chess::Piece::Knight):
-                //        attack = chess::raycast::knight(sq, blockers);
-                //        break;
-                //    case static_cast<int>(chess::Piece::Bishop):
-                //        attack = chess::raycast::bishop(sq, blockers);
-                //        break;
-                //    case static_cast<int>(chess::Piece::Rook):
-                //        attack = chess::raycast::rook(sq, blockers);
-                //        break;
-                //    case static_cast<int>(chess::Piece::Queen):
-                //        attack = chess::raycast::bishop(sq, blockers) | chess::raycast::rook(sq, blockers);
-                //        break;
-                //}
-
-                //score += chess::count(opp_king_zone & attack);
 
                 // Material
                 score += material[p];
