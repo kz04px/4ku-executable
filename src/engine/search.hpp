@@ -1,12 +1,12 @@
 #ifndef SEARCH_HPP
 #define SEARCH_HPP
 
-#include <chess/move.hpp>
 #include <climits>
 #include "time.hpp"
 
 namespace chess {
 class Position;
+class Move;
 }  // namespace chess
 
 namespace search {
