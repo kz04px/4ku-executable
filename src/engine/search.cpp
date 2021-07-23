@@ -109,7 +109,21 @@ const int pst[6][64] = {
     int best_score = -inf;
     int best_idx = -1;
 
+    // MVV-LVA
+    auto score_move = [&pos](const chess::Move &move) -> int {
+        const int order[] = {1, 2, 2, 3, 4, 5, 0};
+        const auto captured = chess::piece_on(pos, move.to);
+        return 8 * order[static_cast<int>(captured)] - order[static_cast<int>(move.place_piece)];
+    };
+
     for (int i = 0; i < num_moves; ++i) {
+        // Find the best upcoming move
+        for (int j = i; j < num_moves; ++j) {
+            if (score_move(moves[j]) > score_move(moves[i])) {
+                std::swap(moves[j], moves[i]);
+            }
+        }
+
         auto npos = pos;
 
         // Check move legality
