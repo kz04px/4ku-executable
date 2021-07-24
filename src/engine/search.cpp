@@ -119,7 +119,7 @@ const int pst[6][64] = {
     // MVV-LVA
     auto score_move = [&pos, ss, in_qsearch](const chess::Move &move) -> int {
         if (!in_qsearch && move == ss->pv) {
-            return 10000;
+            return 1 << 16;
         } else {
             const int order[] = {1, 2, 2, 3, 4, 5, 0};
             const auto captured = chess::piece_on(pos, move.to);
