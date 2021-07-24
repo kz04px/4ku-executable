@@ -95,8 +95,16 @@ const int pst[6][64] = {
                          const int depth,
                          StackData *ss,
                          const timepoint stop_time) {
-    if (depth == 0) {
-        return eval(pos);
+    const auto in_qsearch = depth <= 0;
+
+    if (in_qsearch) {
+        const auto stand_pat = eval(pos);
+        if (stand_pat >= beta) {
+            return beta;
+        }
+        if (stand_pat > alpha) {
+            alpha = stand_pat;
+        }
     }
 
     // Did we run out of time?
@@ -109,8 +117,8 @@ const int pst[6][64] = {
     int best_score = -inf;
 
     // MVV-LVA
-    auto score_move = [&pos, ss](const chess::Move &move) -> int {
-        if (move == ss->pv) {
+    auto score_move = [&pos, ss, in_qsearch](const chess::Move &move) -> int {
+        if (!in_qsearch && move == ss->pv) {
             return 10000;
         } else {
             const int order[] = {1, 2, 2, 3, 4, 5, 0};
@@ -128,6 +136,11 @@ const int pst[6][64] = {
         }
 
         auto npos = pos;
+
+        // Stop searching in qsearch if we get to the noncaptures
+        if (in_qsearch && (1ULL << moves[i].to) & ~pos.colour[1]) {
+            break;
+        }
 
         // Check move legality
         if (!chess::makemove(npos, moves[i])) {
@@ -148,6 +161,10 @@ const int pst[6][64] = {
         if (alpha >= beta) {
             break;
         }
+    }
+
+    if (in_qsearch) {
+        return alpha;
     }
 
     // No legal moves
