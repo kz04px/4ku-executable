@@ -135,12 +135,12 @@ const int pst[6][64] = {
             }
         }
 
-        auto npos = pos;
-
         // Stop searching in qsearch if we get to the noncaptures
         if (in_qsearch && (1ULL << moves[i].to) & ~pos.colour[1]) {
             break;
         }
+
+        auto npos = pos;
 
         // Check move legality
         if (!chess::makemove(npos, moves[i])) {
