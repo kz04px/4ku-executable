@@ -92,9 +92,17 @@ const int pst[6][64] = {
 [[nodiscard]] int search(const chess::Position &pos,
                          int alpha,
                          const int beta,
-                         const int depth,
+                         int depth,
                          StackData *ss,
                          const timepoint stop_time) {
+    const auto ksq = chess::lsbll(pos.colour[0] & pos.pieces[static_cast<int>(chess::Piece::King)]);
+    const auto in_check = chess::attacked(pos, ksq, true);
+
+    // Check extension
+    if (depth >= 0 && in_check) {
+        depth++;
+    }
+
     const auto in_qsearch = depth <= 0;
 
     if (in_qsearch) {
@@ -169,9 +177,6 @@ const int pst[6][64] = {
 
     // No legal moves
     if (best_score == -inf) {
-        const auto ksq = chess::lsbll(pos.colour[0] & pos.pieces[static_cast<int>(chess::Piece::King)]);
-        const auto in_check = chess::attacked(pos, ksq, true);
-
         // Checkmate
         if (in_check) {
             return -mate_score;

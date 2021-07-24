@@ -18,12 +18,7 @@ struct StackData {
     chess::Move pv;
 };
 
-int search(const chess::Position &pos,
-           int alpha,
-           const int beta,
-           const int depth,
-           StackData *ss,
-           const timepoint stop_time);
+int search(const chess::Position &pos, int alpha, const int beta, int depth, StackData *ss, const timepoint stop_time);
 
 }  // namespace search
 
