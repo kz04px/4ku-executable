@@ -14,7 +14,9 @@ const int material[] = {100, 300, 325, 500, 900, 0};
 const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
 
 [[nodiscard]] int eval(const chess::Position &pos) {
-    int score = 0;
+
+    // Tempo bonus
+    int score = 10;
 
     for (int c = 0; c < 2; ++c) {
         const auto opp_pawns = pos.colour[c ^ 1] & pos.pieces[static_cast<int>(chess::Piece::Pawn)];
