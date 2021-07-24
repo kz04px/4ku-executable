@@ -93,7 +93,7 @@ const int pst[6][64] = {
                          int alpha,
                          const int beta,
                          const int depth,
-                         chess::Move &pv,
+                         StackData *ss,
                          const timepoint stop_time) {
     if (depth == 0) {
         return eval(pos);
@@ -107,13 +107,16 @@ const int pst[6][64] = {
     chess::Move moves[256];
     const int num_moves = chess::movegen(pos, moves);
     int best_score = -inf;
-    int best_idx = -1;
 
     // MVV-LVA
-    auto score_move = [&pos](const chess::Move &move) -> int {
-        const int order[] = {1, 2, 2, 3, 4, 5, 0};
-        const auto captured = chess::piece_on(pos, move.to);
-        return 8 * order[static_cast<int>(captured)] - order[static_cast<int>(move.place_piece)];
+    auto score_move = [&pos, ss](const chess::Move &move) -> int {
+        if (move == ss->pv) {
+            return 10000;
+        } else {
+            const int order[] = {1, 2, 2, 3, 4, 5, 0};
+            const auto captured = chess::piece_on(pos, move.to);
+            return 8 * order[static_cast<int>(captured)] - order[static_cast<int>(move.place_piece)];
+        }
     };
 
     for (int i = 0; i < num_moves; ++i) {
@@ -131,11 +134,11 @@ const int pst[6][64] = {
             continue;
         }
 
-        const auto score = -search(npos, -beta, -alpha, depth - 1, pv, stop_time);
+        const auto score = -search(npos, -beta, -alpha, depth - 1, ss + 1, stop_time);
 
         if (score > best_score) {
-            best_idx = i;
             best_score = score;
+            ss->pv = moves[i];
 
             if (score > alpha) {
                 alpha = score;
@@ -148,7 +151,7 @@ const int pst[6][64] = {
     }
 
     // No legal moves
-    if (best_idx == -1) {
+    if (best_score == -inf) {
         const auto ksq = chess::lsbll(pos.colour[0] & pos.pieces[static_cast<int>(chess::Piece::King)]);
         const auto in_check = chess::attacked(pos, ksq, true);
 
@@ -161,8 +164,6 @@ const int pst[6][64] = {
             return 0;
         }
     }
-
-    pv = moves[best_idx];
 
     return best_score;
 }
