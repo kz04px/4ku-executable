@@ -92,27 +92,31 @@ int alphabeta(const chess::Position &pos,
 
     chess::Move moves[256];
     const int num_moves = chess::movegen(pos, moves);
-    int best_score = -INF;
 
+    int move_scores[256];
+    for (int j = 0; j < num_moves; ++j) {
+        auto move_score = 0;
+
+        // PV-move first
+        if (!in_qsearch && moves[j] == pvline[ply]) {
+            move_score = 1 << 16;
+        } else {
+            // MVVLVA
+            const auto capture = chess::piece_on(pos, moves[j].to);
+            if (capture != chess::Piece::None) {
+                move_score = ((static_cast<int>(capture) + 1) * 8) - static_cast<int>(chess::piece_on(pos, moves[j].from));
+            }
+        }
+        move_scores[j] = move_score;
+    }
+
+    int best_score = -INF;
     for (int i = 0; i < num_moves; ++i) {
         int best_move_score = 0;
         int best_move_score_index = i;
         for (int j = i; j < num_moves; ++j) {
-            auto move_score = 0;
-
-            // PV-move first
-            if (!in_qsearch && moves[j] == pvline[ply]) {
-                move_score = 1 << 16;
-            } else {
-                // MVVLVA
-                const auto capture = chess::piece_on(pos, moves[j].to);
-                if (capture != chess::Piece::None) {
-                    move_score =
-                        ((static_cast<int>(capture) + 1) * 8) - static_cast<int>(chess::piece_on(pos, moves[j].from));
-                }
-            }
-            if (move_score > best_move_score) {
-                best_move_score = move_score;
+            if (move_scores[j] > best_move_score) {
+                best_move_score = move_scores[j];
                 best_move_score_index = j;
             }
         }
@@ -120,6 +124,10 @@ int alphabeta(const chess::Position &pos,
         const auto tempMove = moves[i];
         moves[i] = moves[best_move_score_index];
         moves[best_move_score_index] = tempMove;
+
+        const auto tempMoveScore = move_scores[i];
+        move_scores[i] = move_scores[best_move_score_index];
+        move_scores[best_move_score_index] = tempMoveScore;
 
         // Since moves are ordered captures first, break in qsearch
         if (in_qsearch && chess::piece_on(pos, moves[i].to) == chess::Piece::None) {
