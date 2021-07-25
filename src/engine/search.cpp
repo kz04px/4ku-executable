@@ -147,13 +147,13 @@ int alphabeta(chess::Position &pos,
             }
         }
 
-        const auto tempMove = moves[i];
+        const auto temp_move = moves[i];
         moves[i] = moves[best_move_score_index];
-        moves[best_move_score_index] = tempMove;
+        moves[best_move_score_index] = temp_move;
 
-        const auto tempMoveScore = move_scores[i];
+        const auto temp_move_score = move_scores[i];
         move_scores[i] = move_scores[best_move_score_index];
-        move_scores[best_move_score_index] = tempMoveScore;
+        move_scores[best_move_score_index] = temp_move_score;
 
         // Since moves are ordered captures first, break in qsearch
         if (in_qsearch && chess::piece_on(pos, moves[i].to) == chess::Piece::None) {
