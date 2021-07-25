@@ -50,6 +50,8 @@ const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
                         score += passers[rank];
                     }
                 } else if (p == static_cast<int>(chess::Piece::Rook)) {
+
+                    // Open and semi-open files
                     const auto file_bb = 0x101010101010101ULL << file;
                     if ((file_bb & pawns[0]) == 0) {
                         if ((file_bb & pawns[1]) == 0) {
@@ -57,6 +59,8 @@ const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
                         }
                         score += 5;
                     }
+
+                    // Bonus on 7th/8th rank
                     if (rank >= 6) {
                         score += 15;
                     }
@@ -100,6 +104,8 @@ int alphabeta(chess::Position &pos,
             alpha = static_eval;
         }
     } else if (depth < 3) {
+
+        // Reverse futility pruning
         const int margin = 120;
         if (static_eval - margin * depth >= beta) {
             return beta;
@@ -133,6 +139,8 @@ int alphabeta(chess::Position &pos,
 
     int best_score = -INF;
     for (int i = 0; i < num_moves; ++i) {
+
+        // Pick next move
         int best_move_score = 0;
         int best_move_score_index = i;
         for (int j = i; j < num_moves; ++j) {
@@ -162,6 +170,7 @@ int alphabeta(chess::Position &pos,
             continue;
         }
 
+        // Poor man's PVS
         const int new_beta = -alpha;
         int new_alpha = -alpha - 1;
         goto do_search;
