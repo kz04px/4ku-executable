@@ -151,9 +151,7 @@ int alphabeta(chess::Position &pos,
         moves[i] = moves[best_move_score_index];
         moves[best_move_score_index] = temp_move;
 
-        const auto temp_move_score = move_scores[i];
-        move_scores[i] = move_scores[best_move_score_index];
-        move_scores[best_move_score_index] = temp_move_score;
+        move_scores[best_move_score_index] = move_scores[i];
 
         // Since moves are ordered captures first, break in qsearch
         if (in_qsearch && chess::piece_on(pos, moves[i].to) == chess::Piece::None) {
