@@ -19,7 +19,10 @@ const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
     int score = 10;
 
     for (int c = 0; c < 2; ++c) {
-        const auto opp_pawns = pos.colour[1] & pos.pieces[static_cast<int>(chess::Piece::Pawn)];
+        chess::Bitboard pawns[2];
+        for (int c2 = 0; c2 < 2; ++c2) {
+            pawns[c2] = pos.colour[c2] & pos.pieces[static_cast<int>(chess::Piece::Pawn)];
+        }
 
         for (int p = 0; p < 6; ++p) {
             auto copy = pos.colour[0] & pos.pieces[p];
@@ -42,9 +45,20 @@ const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
                     for (auto i = 0; i < 4; ++i) {
                         attack |= chess::north(attack);
                     }
-                    const auto is_passed = (attack & opp_pawns) == 0;
+                    const auto is_passed = (attack & pawns[1]) == 0;
                     if (is_passed) {
                         score += passers[rank];
+                    }
+                } else if (p == static_cast<int>(chess::Piece::Rook)) {
+                    const auto file_bb = 0x101010101010101ULL << file;
+                    if ((file_bb & pawns[0]) == 0) {
+                        if ((file_bb & pawns[1]) == 0) {
+                            score += 5;
+                        }
+                        score += 5;
+                    }
+                    if (rank >= 6) {
+                        score += 15;
                     }
                 }
 
