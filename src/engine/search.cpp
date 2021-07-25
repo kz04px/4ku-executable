@@ -14,7 +14,6 @@ const int material[] = {100, 300, 325, 500, 900, 0};
 const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
 
 [[nodiscard]] int eval(chess::Position &pos) {
-
     // Tempo bonus
     int score = 10;
 
@@ -50,7 +49,6 @@ const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
                         score += passers[rank];
                     }
                 } else if (p == static_cast<int>(chess::Piece::Rook)) {
-
                     // Open and semi-open files
                     const auto file_bb = 0x101010101010101ULL << file;
                     if ((file_bb & pawns[0]) == 0) {
@@ -104,7 +102,6 @@ int alphabeta(chess::Position &pos,
             alpha = static_eval;
         }
     } else if (depth < 3) {
-
         // Reverse futility pruning
         const int margin = 120;
         if (static_eval - margin * depth >= beta) {
@@ -131,7 +128,8 @@ int alphabeta(chess::Position &pos,
             // MVVLVA
             const auto capture = chess::piece_on(pos, moves[j].to);
             if (capture != chess::Piece::None) {
-                move_score = ((static_cast<int>(capture) + 1) * 8) - static_cast<int>(chess::piece_on(pos, moves[j].from));
+                move_score =
+                    ((static_cast<int>(capture) + 1) * 8) - static_cast<int>(chess::piece_on(pos, moves[j].from));
             }
         }
         move_scores[j] = move_score;
@@ -139,7 +137,6 @@ int alphabeta(chess::Position &pos,
 
     int best_score = -INF;
     for (int i = 0; i < num_moves; ++i) {
-
         // Pick next move
         int best_move_score = 0;
         int best_move_score_index = i;
@@ -174,9 +171,9 @@ int alphabeta(chess::Position &pos,
         const int new_beta = -alpha;
         int new_alpha = -alpha - 1;
         goto do_search;
-        full_search:
+    full_search:
         new_alpha = -beta;
-        do_search:
+    do_search:
         const int score = -alphabeta(npos, new_alpha, new_beta, depth - 1, ply + 1, stop_time, pvline);
         if (score > alpha && new_alpha != -beta) {
             goto full_search;
