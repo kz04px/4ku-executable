@@ -11,7 +11,7 @@ class Move;
 
 namespace search {
 
-int alphabeta(const chess::Position &pos,
+int alphabeta(chess::Position &pos,
               int alpha,
               const int beta,
               int depth,

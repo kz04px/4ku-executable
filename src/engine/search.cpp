@@ -13,16 +13,16 @@ namespace search {
 const int material[] = {100, 300, 325, 500, 900, 0};
 const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
 
-[[nodiscard]] int eval(const chess::Position &pos) {
+[[nodiscard]] int eval(chess::Position &pos) {
 
     // Tempo bonus
     int score = 10;
 
     for (int c = 0; c < 2; ++c) {
-        const auto opp_pawns = pos.colour[c ^ 1] & pos.pieces[static_cast<int>(chess::Piece::Pawn)];
+        const auto opp_pawns = pos.colour[1] & pos.pieces[static_cast<int>(chess::Piece::Pawn)];
 
         for (int p = 0; p < 6; ++p) {
-            auto copy = pos.colour[c] & pos.pieces[p];
+            auto copy = pos.colour[0] & pos.pieces[p];
             while (copy) {
                 const auto sq = chess::lsbll(copy);
                 copy &= copy - 1;
@@ -38,14 +38,13 @@ const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
                     const auto bb = 1ULL << sq;
 
                     // Passed pawns
-                    auto attack = c == 0 ? chess::nw(bb) | chess::ne(bb) : chess::sw(bb) | chess::se(bb);
+                    auto attack = chess::nw(bb) | chess::ne(bb);
                     for (auto i = 0; i < 4; ++i) {
-                        attack |= c == 0 ? chess::north(attack) : chess::south(attack);
+                        attack |= chess::north(attack);
                     }
                     const auto is_passed = (attack & opp_pawns) == 0;
                     if (is_passed) {
-                        const auto rel_rank = c == 0 ? rank : 7 - rank;
-                        score += passers[rel_rank];
+                        score += passers[rank];
                     }
                 }
 
@@ -54,13 +53,14 @@ const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
             }
         }
 
+        chess::flip(pos);
         score = -score;
     }
 
     return score;
 }
 
-int alphabeta(const chess::Position &pos,
+int alphabeta(chess::Position &pos,
               int alpha,
               const int beta,
               int depth,
