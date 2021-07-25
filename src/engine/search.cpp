@@ -75,15 +75,20 @@ int alphabeta(chess::Position &pos,
         depth++;
     }
 
+    const int static_eval = eval(pos);
     const bool in_qsearch = depth <= 0;
     if (in_qsearch) {
-        const int static_eval = eval(pos);
         if (static_eval >= beta) {
             return beta;
         }
 
         if (alpha < static_eval) {
             alpha = static_eval;
+        }
+    } else if (depth < 3) {
+        const int margin = 120;
+        if (static_eval - margin * depth >= beta) {
+            return beta;
         }
     }
 
