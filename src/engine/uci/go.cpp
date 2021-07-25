@@ -9,7 +9,7 @@ namespace uci {
 
 void go(chess::Position &pos, const int time) {
     const auto stop_time = now() + time / 30;
-    char bestmove_str[] = "bestmove 123456";
+    char bestmove_str[] = "bestmove       ";
     chess::Move pvline[128];
 
     // Iterative deepening
