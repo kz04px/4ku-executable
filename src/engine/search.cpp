@@ -147,21 +147,19 @@ int alphabeta(chess::Position &pos,
             }
         }
 
-        const auto temp_move = moves[i];
-        moves[i] = moves[best_move_score_index];
-        moves[best_move_score_index] = temp_move;
-
+        const auto move = moves[best_move_score_index];
+        moves[best_move_score_index] = moves[i];
         move_scores[best_move_score_index] = move_scores[i];
 
         // Since moves are ordered captures first, break in qsearch
-        if (in_qsearch && chess::piece_on(pos, moves[i].to) == chess::Piece::None) {
+        if (in_qsearch && chess::piece_on(pos, move.to) == chess::Piece::None) {
             break;
         }
 
         auto npos = pos;
 
         // Check move legality
-        if (!chess::makemove(npos, moves[i])) {
+        if (!chess::makemove(npos, move)) {
             continue;
         }
 
@@ -182,7 +180,7 @@ int alphabeta(chess::Position &pos,
 
             if (score > alpha) {
                 alpha = score;
-                pvline[ply] = moves[i];
+                pvline[ply] = move;
             }
         }
 
