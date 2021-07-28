@@ -13,6 +13,10 @@ namespace search {
 const int material[] = {100, 300, 325, 500, 900, 0};
 const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
 
+#ifdef USE_SEARCHINFO
+unsigned long long int nodes_searched;
+#endif
+
 [[nodiscard]] int eval(chess::Position &pos) {
     // Tempo bonus
     int score = 10;
@@ -162,6 +166,10 @@ int alphabeta(chess::Position &pos,
         if (!chess::makemove(npos, move)) {
             continue;
         }
+
+#ifdef USE_SEARCHINFO
+        ++nodes_searched;
+#endif
 
         // Poor man's PVS
         const int new_beta = -alpha;
