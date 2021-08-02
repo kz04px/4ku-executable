@@ -10,8 +10,9 @@
 
 namespace search {
 
-const int material[] = {100, 300, 325, 500, 900, 0};
-const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
+const int material[] = {87, 332, 363, 534, 1076, 0};
+const int centralities[] = {7, 20, 18, 1, 2, 2};
+const int passers[] = {21, 14, 9, 24, 76, 171};
 
 #ifdef USE_SEARCHINFO
 unsigned long long int nodes_searched;
@@ -33,11 +34,12 @@ unsigned long long int nodes_searched;
                 const auto sq = chess::lsbll(copy);
                 copy &= copy - 1;
 
-                // Centrality
                 const int rank = sq >> 3;
                 const int file = sq & 7;
-                const int centrality = -std::abs(7 - rank - file) - std::abs(rank - file);
-                score += centrality * (6 - p);
+
+                // Centrality
+                const int centrality = (7 - std::abs(7 - rank - file) - std::abs(rank - file)) / 2;
+                score += centrality * centralities[p];
 
                 // Pawn eval
                 if (p == static_cast<int>(chess::Piece::Pawn)) {
@@ -50,21 +52,22 @@ unsigned long long int nodes_searched;
                     }
                     const auto is_passed = (attack & pawns[1]) == 0;
                     if (is_passed) {
-                        score += passers[rank];
+                        score += passers[rank - 1];
                     }
                 } else if (p == static_cast<int>(chess::Piece::Rook)) {
                     // Open and semi-open files
                     const auto file_bb = 0x101010101010101ULL << file;
                     if ((file_bb & pawns[0]) == 0) {
                         if ((file_bb & pawns[1]) == 0) {
-                            score += 5;
+                            score += 43;
+                        } else {
+                            score += 26;
                         }
-                        score += 5;
                     }
 
                     // Bonus on 7th/8th rank
                     if (rank >= 6) {
-                        score += 15;
+                        score += 26;
                     }
                 }
 
