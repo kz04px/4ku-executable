@@ -10,9 +10,12 @@
 
 namespace search {
 
-const int material[] = {87, 332, 363, 534, 1076, 0};
-const int centralities[] = {7, 20, 18, 1, 2, 2};
-const int passers[] = {21, 14, 9, 24, 76, 171};
+constexpr int material[] = {100, 339, 372, 582, 1180};
+constexpr int centralities[] = {2, 20, 16, 1, 3, 11};
+constexpr int passers[] = {17, 11, 13, 31, 93, 192};
+constexpr int rook_semi_open = 25;
+constexpr int rook_open = 35;
+constexpr int rook_rank78 = 24;
 
 #ifdef USE_SEARCHINFO
 unsigned long long int nodes_searched;
@@ -59,15 +62,15 @@ unsigned long long int nodes_searched;
                     const auto file_bb = 0x101010101010101ULL << file;
                     if ((file_bb & pawns[0]) == 0) {
                         if ((file_bb & pawns[1]) == 0) {
-                            score += 43;
+                            score += rook_open;
                         } else {
-                            score += 26;
+                            score += rook_semi_open;
                         }
                     }
 
                     // Bonus on 7th/8th rank
                     if (rank >= 6) {
-                        score += 26;
+                        score += rook_rank78;
                     }
                 }
 
@@ -171,7 +174,7 @@ int alphabeta(chess::Position &pos,
         }
 
 #ifdef USE_SEARCHINFO
-        ++nodes_searched;
+        nodes_searched++;
 #endif
 
         // Poor man's PVS
