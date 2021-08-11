@@ -10,8 +10,16 @@
 
 namespace search {
 
-const int material[] = {100, 300, 325, 500, 900, 0};
-const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
+constexpr int material[] = {100, 339, 372, 582, 1180};
+constexpr int centralities[] = {2, 20, 16, 1, 3, 11};
+constexpr int passers[] = {17, 11, 13, 31, 93, 192};
+constexpr int rook_semi_open = 25;
+constexpr int rook_open = 35;
+constexpr int rook_rank78 = 24;
+
+#ifdef USE_SEARCHINFO
+unsigned long long int nodes_searched;
+#endif
 
 [[nodiscard]] int eval(chess::Position &pos) {
     // Tempo bonus
@@ -29,11 +37,12 @@ const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
                 const auto sq = chess::lsbll(copy);
                 copy &= copy - 1;
 
-                // Centrality
                 const int rank = sq >> 3;
                 const int file = sq & 7;
-                const int centrality = -std::abs(7 - rank - file) - std::abs(rank - file);
-                score += centrality * (6 - p);
+
+                // Centrality
+                const int centrality = (7 - std::abs(7 - rank - file) - std::abs(rank - file)) / 2;
+                score += centrality * centralities[p];
 
                 // Pawn eval
                 if (p == static_cast<int>(chess::Piece::Pawn)) {
@@ -46,21 +55,22 @@ const int passers[] = {0, 20, 20, 32, 56, 92, 140, 0};
                     }
                     const auto is_passed = (attack & pawns[1]) == 0;
                     if (is_passed) {
-                        score += passers[rank];
+                        score += passers[rank - 1];
                     }
                 } else if (p == static_cast<int>(chess::Piece::Rook)) {
                     // Open and semi-open files
                     const auto file_bb = 0x101010101010101ULL << file;
                     if ((file_bb & pawns[0]) == 0) {
                         if ((file_bb & pawns[1]) == 0) {
-                            score += 5;
+                            score += rook_open;
+                        } else {
+                            score += rook_semi_open;
                         }
-                        score += 5;
                     }
 
                     // Bonus on 7th/8th rank
                     if (rank >= 6) {
-                        score += 15;
+                        score += rook_rank78;
                     }
                 }
 
@@ -147,23 +157,25 @@ int alphabeta(chess::Position &pos,
             }
         }
 
-        const auto temp_move = moves[i];
-        moves[i] = moves[best_move_score_index];
-        moves[best_move_score_index] = temp_move;
-
+        const auto move = moves[best_move_score_index];
+        moves[best_move_score_index] = moves[i];
         move_scores[best_move_score_index] = move_scores[i];
 
         // Since moves are ordered captures first, break in qsearch
-        if (in_qsearch && chess::piece_on(pos, moves[i].to) == chess::Piece::None) {
+        if (in_qsearch && chess::piece_on(pos, move.to) == chess::Piece::None) {
             break;
         }
 
         auto npos = pos;
 
         // Check move legality
-        if (!chess::makemove(npos, moves[i])) {
+        if (!chess::makemove(npos, move)) {
             continue;
         }
+
+#ifdef USE_SEARCHINFO
+        nodes_searched++;
+#endif
 
         // Poor man's PVS
         const int new_beta = -alpha;
@@ -182,7 +194,7 @@ int alphabeta(chess::Position &pos,
 
             if (score > alpha) {
                 alpha = score;
-                pvline[ply] = moves[i];
+                pvline[ply] = move;
             }
         }
 

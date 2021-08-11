@@ -11,6 +11,10 @@ class Move;
 
 namespace search {
 
+#ifdef USE_SEARCHINFO
+extern unsigned long long int nodes_searched;
+#endif
+
 int alphabeta(chess::Position &pos,
               int alpha,
               const int beta,

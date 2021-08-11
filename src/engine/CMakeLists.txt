@@ -16,6 +16,11 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
+option(USE_SEARCHINFO "Produce UCI 'info' output" OFF)
+if(USE_SEARCHINFO)
+    add_definitions(-DUSE_SEARCHINFO)
+endif()
+
 # Add engine executable
 add_executable(
     4ku
