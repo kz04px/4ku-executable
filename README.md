@@ -1,12 +1,14 @@
-# 4ku
-Trying to fit a chess engine into 4,096 bytes with some mild success. Uses [xz](https://linux.die.net/man/1/xz).
+# 4ku-executable
+Trying to fit a chess engine into 4,096 bytes with some mild success. Uses [xz](https://linux.die.net/man/1/xz). This engine is no longer actively worked on in favour of 4ku found [here](https://github.com/kz04px/4ku). 4ku-executable uses a compressed executable, where as 4ku uses compressed source and is significantly stronger while still fitting into the same size limitations.
+
+This engine should probably not appear in any rating lists.
 
 ---
 
 ## Build
 ```
-git clone https://github.com/kz04px/4ku
-cd 4ku
+git clone https://github.com/kz04px/4ku-executable
+cd 4ku-executable
 sh build-linux.sh
 ```
 
