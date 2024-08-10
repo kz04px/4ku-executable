@@ -35,7 +35,7 @@ static int colour_on(const Position &pos, const int sq) {
     const auto bb = Bitboard(1ULL << sq);
     if (pos.colour[0] & bb) {
         return 0;
-    } else if (pos.pieces[1] & bb) {
+    } else if (pos.colour[1] & bb) {
         return 1;
     } else {
         return 2;
